@@ -7,7 +7,7 @@ struct ContentView: View {
     init() {
         // Dark background for UITabBar to ensure full screen dark coverage
         let appearance = UITabBarAppearance()
-        appearance.configureWithSolidBackground()
+        appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = UIColor(Color.appBackground)
         appearance.shadowColor = UIColor(Color.appCardBorder)
         
