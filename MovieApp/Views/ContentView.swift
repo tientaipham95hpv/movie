@@ -19,7 +19,8 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            Color.appBackground.ignoresSafeArea()
+            Color.appBackground
+                .ignoresSafeArea(.all)
             
             TabView(selection: $selectedTab) {
                 HomeView()
@@ -61,6 +62,5 @@ struct ContentView: View {
                     .zIndex(999)
             }
         }
-        .ignoresSafeArea()
     }
 }
