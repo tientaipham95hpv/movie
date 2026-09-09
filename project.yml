@@ -3,8 +3,6 @@ options:
   bundleIdPrefix: com.app
   deploymentTarget:
     iOS: "15.0"
-  xcodeVersion: "15.0"
-  objectVersion: 56
 
 targets:
   MovieApp:
