@@ -140,12 +140,10 @@ struct HomeView: View {
                         NavigationLink(destination: ResumePlayerView(item: item)) {
                             VStack(alignment: .leading, spacing: 6) {
                                 ZStack(alignment: .bottom) {
-                                    AsyncImage(url: URL(string: item.posterURL)) { phase in
-                                        if let img = phase.image {
-                                            img.resizable().aspectRatio(contentMode: .fill)
-                                        } else {
-                                            Rectangle().fill(Color.appCardBg)
-                                        }
+                                    CachedAsyncImage(urlString: item.posterURL) { img in
+                                        img.resizable().aspectRatio(contentMode: .fill)
+                                    } placeholder: {
+                                        Rectangle().fill(Color.appCardBg)
                                     }
                                     .frame(width: 145, height: 90)
                                     .cornerRadius(10)

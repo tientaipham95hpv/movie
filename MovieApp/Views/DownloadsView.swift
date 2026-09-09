@@ -67,12 +67,10 @@ struct DownloadsView: View {
                             VStack(spacing: 12) {
                                 ForEach(downloadManager.downloads) { item in
                                     HStack(spacing: 14) {
-                                        AsyncImage(url: URL(string: item.posterURL)) { phase in
-                                            if let img = phase.image {
-                                                img.resizable().aspectRatio(contentMode: .fill)
-                                            } else {
-                                                Rectangle().fill(Color.appCardBg)
-                                            }
+                                        CachedAsyncImage(urlString: item.posterURL) { img in
+                                            img.resizable().aspectRatio(contentMode: .fill)
+                                        } placeholder: {
+                                            Rectangle().fill(Color.appCardBg)
                                         }
                                         .frame(width: 70, height: 90)
                                         .cornerRadius(12)

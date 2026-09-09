@@ -67,8 +67,8 @@ public struct UnifiedMovie: Identifiable, Codable, Hashable {
         self.title = title
         self.originalTitle = originalTitle
         self.slug = slug
-        self.posterURL = posterURL
-        self.thumbURL = thumbURL
+        self.posterURL = UnifiedMovie.cleanImageURL(posterURL, baseURL: "https://nguon.vsphim.com")
+        self.thumbURL = UnifiedMovie.cleanImageURL(thumbURL, baseURL: "https://nguon.vsphim.com")
         self.year = year
         self.quality = quality
         self.category = category
@@ -87,8 +87,8 @@ public struct UnifiedMovie: Identifiable, Codable, Hashable {
         self.title = item.name ?? "Không có tiêu đề"
         self.originalTitle = item.origin_name ?? ""
         self.slug = item.slug ?? ""
-        self.posterURL = item.poster_url ?? ""
-        self.thumbURL = item.thumb_url ?? item.poster_url ?? ""
+        self.posterURL = UnifiedMovie.cleanImageURL(item.poster_url, baseURL: "https://nguon.vsphim.com")
+        self.thumbURL = UnifiedMovie.cleanImageURL(item.thumb_url ?? item.poster_url, baseURL: "https://nguon.vsphim.com")
         self.year = item.year != nil ? String(item.year!) : ""
         self.quality = "HD"
         self.category = []
@@ -107,8 +107,8 @@ public struct UnifiedMovie: Identifiable, Codable, Hashable {
         self.title = item.name ?? "Không có tiêu đề"
         self.originalTitle = item.origin_name ?? ""
         self.slug = item.slug ?? ""
-        self.posterURL = item.poster_url ?? ""
-        self.thumbURL = item.thumb_url ?? item.poster_url ?? ""
+        self.posterURL = UnifiedMovie.cleanImageURL(item.poster_url, baseURL: "https://avdbapi.com")
+        self.thumbURL = UnifiedMovie.cleanImageURL(item.thumb_url ?? item.poster_url, baseURL: "https://avdbapi.com")
         self.year = item.year ?? ""
         self.quality = item.quality ?? "FHD"
         self.category = item.category ?? []
@@ -127,5 +127,20 @@ public struct UnifiedMovie: Identifiable, Codable, Hashable {
             }
         }
         self.episodes = eps
+    }
+    
+    // MARK: - Clean & Normalize Image URLs
+    public static func cleanImageURL(_ rawURL: String?, baseURL: String) -> String {
+        guard var url = rawURL?.trimmingCharacters(in: .whitespacesAndNewlines), !url.isEmpty else { return "" }
+        if url.hasPrefix("//") {
+            return "https:" + url
+        }
+        if url.hasPrefix("/") {
+            return baseURL + url
+        }
+        if !url.hasPrefix("http://") && !url.hasPrefix("https://") {
+            return "https://" + url
+        }
+        return url
     }
 }

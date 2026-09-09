@@ -8,29 +8,16 @@ struct MovieCard: View {
             // Poster Container with fixed Geometry bounds
             GeometryReader { geo in
                 ZStack(alignment: .bottomLeading) {
-                    AsyncImage(url: URL(string: movie.thumbURL.isEmpty ? movie.posterURL : movie.thumbURL)) { phase in
-                        switch phase {
-                        case .empty:
-                            Rectangle()
-                                .fill(Color.appCardBg)
-                                .overlay(ProgressView().tint(.white))
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: geo.size.width, height: 180)
-                                .clipped()
-                        case .failure:
-                            Rectangle()
-                                .fill(Color.appCardBg)
-                                .overlay(
-                                    Image(systemName: "film")
-                                        .font(.system(size: 24))
-                                        .foregroundColor(.gray.opacity(0.6))
-                                )
-                        @unknown default:
-                            EmptyView()
-                        }
+                    CachedAsyncImage(urlString: movie.thumbURL.isEmpty ? movie.posterURL : movie.thumbURL) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: geo.size.width, height: 180)
+                            .clipped()
+                    } placeholder: {
+                        Rectangle()
+                            .fill(Color.appCardBg)
+                            .overlay(ProgressView().tint(.white))
                     }
                     .frame(width: geo.size.width, height: 180)
                     .clipped()

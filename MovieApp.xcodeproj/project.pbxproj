@@ -30,6 +30,7 @@
 		AA1000162C8F000100000016 /* LockScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2000162C8F000100000016 /* LockScreenView.swift */; };
 		AA1000172C8F000100000017 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2000172C8F000100000017 /* SettingsView.swift */; };
 		AA1000182C8F000100000018 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2000182C8F000100000018 /* DesignSystem.swift */; };
+		AA1000192C8F000100000019 /* CachedAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2000192C8F000100000019 /* CachedAsyncImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +59,7 @@
 		AA2000162C8F000100000016 /* LockScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/LockScreenView.swift; sourceTree = "<group>"; };
 		AA2000172C8F000100000017 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SettingsView.swift; sourceTree = "<group>"; };
 		AA2000182C8F000100000018 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/DesignSystem.swift; sourceTree = "<group>"; };
+		AA2000192C8F000100000019 /* CachedAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/CachedAsyncImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +108,7 @@
 				AA2000162C8F000100000016 /* LockScreenView.swift */,
 				AA2000172C8F000100000017 /* SettingsView.swift */,
 				AA2000182C8F000100000018 /* DesignSystem.swift */,
+				AA2000192C8F000100000019 /* CachedAsyncImage.swift */,
 			);
 			path = MovieApp;
 			sourceTree = "<group>";
@@ -190,6 +193,7 @@
 				AA1000162C8F000100000016 /* LockScreenView.swift in Sources */,
 				AA1000172C8F000100000017 /* SettingsView.swift in Sources */,
 				AA1000182C8F000100000018 /* DesignSystem.swift in Sources */,
+				AA1000192C8F000100000019 /* CachedAsyncImage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

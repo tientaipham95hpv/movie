@@ -34,13 +34,10 @@ struct MovieDetailView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     // Hero Poster Backdrop Banner
                     ZStack(alignment: .bottomLeading) {
-                        AsyncImage(url: URL(string: movie.posterURL.isEmpty ? movie.thumbURL : movie.posterURL)) { phase in
-                            switch phase {
-                            case .success(let img):
-                                img.resizable().aspectRatio(contentMode: .fill)
-                            default:
-                                Rectangle().fill(Color.appCardBg)
-                            }
+                        CachedAsyncImage(urlString: movie.posterURL.isEmpty ? movie.thumbURL : movie.posterURL) { img in
+                            img.resizable().aspectRatio(contentMode: .fill)
+                        } placeholder: {
+                            Rectangle().fill(Color.appCardBg)
                         }
                         .frame(height: 300)
                         .frame(maxWidth: .infinity)
