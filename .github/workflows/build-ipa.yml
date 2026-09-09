@@ -34,13 +34,24 @@ jobs:
 
       - name: Package Payload to Unsigned IPA
         run: |
+          echo "=== Searching for compiled .app bundle ==="
+          APP_PATH=$(find build/Build/Products -name "*.app" -type d | head -n 1)
+          echo "Found .app bundle at: $APP_PATH"
+          
+          if [ -z "$APP_PATH" ]; then
+            echo "ERROR: No .app bundle found in build directory!"
+            exit 1
+          fi
+
           mkdir -p Payload
-          cp -R build/Build/Products/Release-iphoneos/MovieApp.app Payload/
+          cp -R "$APP_PATH" Payload/
           zip -r MovieApp_Unsigned.ipa Payload
           rm -rf Payload
+          echo "=== Successfully created MovieApp_Unsigned.ipa ==="
 
       - name: Upload Unsigned IPA Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MovieApp-Unsigned-IPA
           path: MovieApp_Unsigned.ipa
+          if-no-files-found: error
