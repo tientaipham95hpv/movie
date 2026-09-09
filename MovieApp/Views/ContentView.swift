@@ -4,8 +4,23 @@ struct ContentView: View {
     @State private var selectedTab = 0
     @ObservedObject var security = SecurityService.shared
     
+    init() {
+        // Dark background for UITabBar to ensure full screen dark coverage
+        let appearance = UITabBarAppearance()
+        appearance.configureWithSolidBackground()
+        appearance.backgroundColor = UIColor(Color.appBackground)
+        appearance.shadowColor = UIColor(Color.appCardBorder)
+        
+        UITabBar.appearance().standardAppearance = appearance
+        if #available(iOS 15.0, *) {
+            UITabBar.appearance().scrollEdgeAppearance = appearance
+        }
+    }
+    
     var body: some View {
         ZStack {
+            Color.appBackground.ignoresSafeArea()
+            
             TabView(selection: $selectedTab) {
                 HomeView()
                     .tabItem {
@@ -37,7 +52,7 @@ struct ContentView: View {
                     }
                     .tag(4)
             }
-            .accentColor(.blue)
+            .accentColor(.appAccentBlue)
             
             // Lock Screen Overlay when Face ID is enabled and app is locked
             if security.isFaceIDEnabled && !security.isUnlocked {
@@ -46,5 +61,6 @@ struct ContentView: View {
                     .zIndex(999)
             }
         }
+        .ignoresSafeArea()
     }
 }

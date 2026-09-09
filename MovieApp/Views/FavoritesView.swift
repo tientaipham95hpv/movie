@@ -64,6 +64,7 @@ struct FavoritesView: View {
                 loadFavorites()
             }
         }
+        .navigationViewStyle(.stack)
     }
     
     private func loadFavorites() {

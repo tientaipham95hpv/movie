@@ -139,5 +139,6 @@ struct SettingsView: View {
                 Text("Bạn có chắc chắn muốn xóa toàn bộ lịch sử xem dở?")
             }
         }
+        .navigationViewStyle(.stack)
     }
 }

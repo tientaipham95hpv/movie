@@ -22,8 +22,8 @@ struct HomeView: View {
     @ObservedObject var historyService = HistoryService.shared
     
     private let columns = [
-        GridItem(.flexible(), spacing: 14),
-        GridItem(.flexible(), spacing: 14)
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12)
     ]
     
     var body: some View {
@@ -31,7 +31,7 @@ struct HomeView: View {
             ZStack {
                 Color.appBackground.ignoresSafeArea()
                 
-                VStack(spacing: 12) {
+                VStack(spacing: 10) {
                     headerView
                     
                     SourcePicker(selectedSource: $selectedSource)
@@ -74,7 +74,7 @@ struct HomeView: View {
                         Spacer()
                     } else {
                         ScrollView(showsIndicators: false) {
-                            VStack(alignment: .leading, spacing: 20) {
+                            VStack(alignment: .leading, spacing: 18) {
                                 if !historyService.historyList.isEmpty {
                                     continueWatchingSection
                                 }
@@ -96,6 +96,7 @@ struct HomeView: View {
                 }
             }
         }
+        .navigationViewStyle(.stack)
     }
     
     private var headerView: some View {
@@ -119,11 +120,11 @@ struct HomeView: View {
             Spacer()
         }
         .padding(.horizontal)
-        .padding(.top, 8)
+        .padding(.top, 4)
     }
     
     private var continueWatchingSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "clock.arrow.circlepath")
                     .foregroundColor(.appAccentPink)
@@ -134,7 +135,7 @@ struct HomeView: View {
             .padding(.horizontal)
             
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 14) {
+                HStack(spacing: 12) {
                     ForEach(historyService.historyList) { item in
                         NavigationLink(destination: ResumePlayerView(item: item)) {
                             VStack(alignment: .leading, spacing: 6) {
@@ -146,16 +147,16 @@ struct HomeView: View {
                                             Rectangle().fill(Color.appCardBg)
                                         }
                                     }
-                                    .frame(width: 150, height: 95)
-                                    .cornerRadius(12)
+                                    .frame(width: 145, height: 90)
+                                    .cornerRadius(10)
                                     .clipped()
                                     
                                     Circle()
                                         .fill(Color.black.opacity(0.6))
-                                        .frame(width: 36, height: 36)
+                                        .frame(width: 32, height: 32)
                                         .overlay(
                                             Image(systemName: "play.fill")
-                                                .font(.system(size: 14))
+                                                .font(.system(size: 12))
                                                 .foregroundColor(.white)
                                         )
                                     
@@ -164,11 +165,11 @@ struct HomeView: View {
                                             Spacer()
                                             Rectangle()
                                                 .fill(LinearGradient(colors: [.appAccentPink, .appAccentPurple], startPoint: .leading, endPoint: .trailing))
-                                                .frame(width: geo.size.width * CGFloat(item.progress), height: 4)
+                                                .frame(width: geo.size.width * CGFloat(item.progress), height: 3)
                                         }
                                     }
                                 }
-                                .frame(width: 150, height: 95)
+                                .frame(width: 145, height: 90)
                                 
                                 Text(item.movieTitle)
                                     .font(.system(size: 12, weight: .semibold))
@@ -179,7 +180,7 @@ struct HomeView: View {
                                     .font(.system(size: 10))
                                     .foregroundColor(.gray)
                             }
-                            .frame(width: 150)
+                            .frame(width: 145)
                         }
                     }
                 }
@@ -189,7 +190,7 @@ struct HomeView: View {
     }
     
     private var movieGridSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "sparkles")
                     .foregroundColor(.appYellow)
@@ -200,7 +201,7 @@ struct HomeView: View {
             }
             .padding(.horizontal)
             
-            LazyVGrid(columns: columns, spacing: 16) {
+            LazyVGrid(columns: columns, spacing: 14) {
                 ForEach(movies) { movie in
                     NavigationLink(destination: MovieDetailView(movie: movie)) {
                         MovieCard(movie: movie)

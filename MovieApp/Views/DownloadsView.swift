@@ -133,5 +133,6 @@ struct DownloadsView: View {
                     .onAppear { player.play() }
             }
         }
+        .navigationViewStyle(.stack)
     }
 }

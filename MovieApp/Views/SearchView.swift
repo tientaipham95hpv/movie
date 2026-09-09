@@ -110,6 +110,7 @@ struct SearchView: View {
             }
             .navigationBarHidden(true)
         }
+        .navigationViewStyle(.stack)
     }
     
     private func performSearch() {
