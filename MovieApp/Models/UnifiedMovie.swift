@@ -1,0 +1,131 @@
+import Foundation
+
+// MARK: - Source Type
+public enum MovieSource: String, Codable, CaseIterable, Identifiable {
+    case all = "Tất Cả"
+    case vsphim = "VSPHIM"
+    case avdb = "AVDB"
+    
+    public var id: String { self.rawValue }
+}
+
+// MARK: - Unified Episode Model
+public struct UnifiedEpisode: Identifiable, Codable, Hashable {
+    public let id: String
+    public let name: String
+    public let embedURL: String
+    public let serverName: String
+    
+    public init(id: String = UUID().uuidString, name: String, embedURL: String, serverName: String = "VIP") {
+        self.id = id
+        self.name = name
+        self.embedURL = embedURL
+        self.serverName = serverName
+    }
+}
+
+// MARK: - Unified Movie Model
+public struct UnifiedMovie: Identifiable, Codable, Hashable {
+    public let id: String
+    public let source: MovieSource
+    public let rawID: String
+    public let title: String
+    public let originalTitle: String
+    public let slug: String
+    public let posterURL: String
+    public let thumbURL: String
+    public var year: String
+    public var quality: String
+    public var category: [String]
+    public var country: [String]
+    public var actor: [String]
+    public var description: String
+    public var duration: String
+    public var episodes: [UnifiedEpisode]
+    
+    public init(
+        id: String? = nil,
+        source: MovieSource,
+        rawID: String,
+        title: String,
+        originalTitle: String = "",
+        slug: String,
+        posterURL: String,
+        thumbURL: String,
+        year: String = "",
+        quality: String = "HD",
+        category: [String] = [],
+        country: [String] = [],
+        actor: [String] = [],
+        description: String = "",
+        duration: String = "",
+        episodes: [UnifiedEpisode] = []
+    ) {
+        self.id = id ?? "\(source.rawValue)_\(rawID)"
+        self.source = source
+        self.rawID = rawID
+        self.title = title
+        self.originalTitle = originalTitle
+        self.slug = slug
+        self.posterURL = posterURL
+        self.thumbURL = thumbURL
+        self.year = year
+        self.quality = quality
+        self.category = category
+        self.country = country
+        self.actor = actor
+        self.description = description
+        self.duration = duration
+        self.episodes = episodes
+    }
+    
+    // MARK: - Initializer from VSPhim
+    public init(fromVSPhim item: VSPhimMovieItem) {
+        self.id = "VSPHIM_\(item.id?.stringValue ?? UUID().uuidString)"
+        self.source = .vsphim
+        self.rawID = item.id?.stringValue ?? ""
+        self.title = item.name ?? "Không có tiêu đề"
+        self.originalTitle = item.origin_name ?? ""
+        self.slug = item.slug ?? ""
+        self.posterURL = item.poster_url ?? ""
+        self.thumbURL = item.thumb_url ?? item.poster_url ?? ""
+        self.year = item.year != nil ? String(item.year!) : ""
+        self.quality = "HD"
+        self.category = []
+        self.country = []
+        self.actor = []
+        self.description = ""
+        self.duration = ""
+        self.episodes = []
+    }
+    
+    // MARK: - Initializer from AVDB
+    public init(fromAVDB item: AVDBMovieItem) {
+        self.id = "AVDB_\(item.id?.stringValue ?? UUID().uuidString)"
+        self.source = .avdb
+        self.rawID = item.id?.stringValue ?? ""
+        self.title = item.name ?? "Không có tiêu đề"
+        self.originalTitle = item.origin_name ?? ""
+        self.slug = item.slug ?? ""
+        self.posterURL = item.poster_url ?? ""
+        self.thumbURL = item.thumb_url ?? item.poster_url ?? ""
+        self.year = item.year ?? ""
+        self.quality = item.quality ?? "FHD"
+        self.category = item.category ?? []
+        self.country = item.country ?? []
+        self.actor = item.actor ?? []
+        self.description = item.description ?? ""
+        self.duration = ""
+        
+        var eps: [UnifiedEpisode] = []
+        if let serverData = item.episodes?.server_data {
+            let serverName = item.episodes?.server_name ?? "VIP"
+            for (key, ep) in serverData {
+                if let link = ep.link_embed, !link.isEmpty {
+                    eps.append(UnifiedEpisode(name: key, embedURL: link, serverName: serverName))
+                }
+            }
+        }
+        self.episodes = eps
+    }
+}
