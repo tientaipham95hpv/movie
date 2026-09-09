@@ -1,0 +1,30 @@
+name: MovieApp
+options:
+  bundleIdPrefix: com.app
+  deploymentTarget:
+    iOS: "15.0"
+
+targets:
+  MovieApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: MovieApp
+    info:
+      path: MovieApp/Info.plist
+      properties:
+        CFBundleDisplayName: "Phim Hay"
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+        NSFaceIDUsageDescription: "Ứng dụng cần sử dụng Face ID để bảo vệ quyền riêng tư cá nhân khi mở ứng dụng."
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.app.movieapp
+        INFOPLIST_FILE: MovieApp/Info.plist
+        CODE_SIGN_IDENTITY: ""
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGNING_ALLOWED: NO
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1,2"
