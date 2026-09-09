@@ -47,7 +47,6 @@ struct PlayerView: UIViewRepresentable {
             self.parent = parent
         }
         
-        // Prevent opening external windows / popups
         func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
             if navigationAction.targetFrame == nil {
                 webView.load(navigationAction.request)
@@ -55,7 +54,6 @@ struct PlayerView: UIViewRepresentable {
             return nil
         }
         
-        // Filter out malicious popups & external deep links
         func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
             if let url = navigationAction.request.url {
                 let scheme = url.scheme?.lowercased() ?? ""
@@ -85,7 +83,10 @@ struct PlayerScreenView: View {
             
             // Header back button & title
             HStack {
-                Button(action: { dismiss() }) {
+                Button(action: {
+                    rotateToPortrait()
+                    dismiss()
+                }) {
                     Image(systemName: "chevron.left.circle.fill")
                         .font(.title)
                         .foregroundColor(.white.opacity(0.85))
@@ -105,5 +106,19 @@ struct PlayerScreenView: View {
         }
         .navigationBarHidden(true)
         .statusBar(hidden: true)
+        .onAppear {
+            rotateToLandscape()
+        }
+        .onDisappear {
+            rotateToPortrait()
+        }
+    }
+    
+    private func rotateToLandscape() {
+        UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+    }
+    
+    private func rotateToPortrait() {
+        UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
     }
 }

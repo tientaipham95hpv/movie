@@ -5,104 +5,106 @@ struct MovieCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            ZStack(alignment: .bottomLeading) {
-                // Poster Image
-                AsyncImage(url: URL(string: movie.thumbURL.isEmpty ? movie.posterURL : movie.thumbURL)) { phase in
-                    switch phase {
-                    case .empty:
-                        Rectangle()
-                            .fill(Color.appCardBg)
-                            .overlay(ProgressView().tint(.white))
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    case .failure:
-                        Rectangle()
-                            .fill(Color.appCardBg)
-                            .overlay(
-                                Image(systemName: "film")
-                                    .font(.system(size: 28))
-                                    .foregroundColor(.gray.opacity(0.6))
-                            )
-                    @unknown default:
-                        EmptyView()
+            // Poster Container with fixed Geometry bounds
+            GeometryReader { geo in
+                ZStack(alignment: .bottomLeading) {
+                    AsyncImage(url: URL(string: movie.thumbURL.isEmpty ? movie.posterURL : movie.thumbURL)) { phase in
+                        switch phase {
+                        case .empty:
+                            Rectangle()
+                                .fill(Color.appCardBg)
+                                .overlay(ProgressView().tint(.white))
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: geo.size.width, height: 180)
+                                .clipped()
+                        case .failure:
+                            Rectangle()
+                                .fill(Color.appCardBg)
+                                .overlay(
+                                    Image(systemName: "film")
+                                        .font(.system(size: 24))
+                                        .foregroundColor(.gray.opacity(0.6))
+                                )
+                        @unknown default:
+                            EmptyView()
+                        }
                     }
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 200)
-                .clipped()
-                
-                // Bottom Gradient Overlay for readability
-                LinearGradient(
-                    colors: [.clear, Color.black.opacity(0.85)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 200)
-                .clipped()
-                
-                // Badges Overlay
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        // Source Badge
-                        Text(movie.source.rawValue)
-                            .font(.system(size: 10, weight: .bold))
-                            .padding(.horizontal, 7)
-                            .padding(.vertical, 3)
-                            .background(
-                                movie.source == .vsphim ?
-                                LinearGradient(colors: [Color.appAccentBlue, Color.blue], startPoint: .leading, endPoint: .trailing) :
-                                LinearGradient(colors: [Color.appAccentPurple, Color.pink], startPoint: .leading, endPoint: .trailing)
-                            )
-                            .foregroundColor(.white)
-                            .cornerRadius(6)
-                        
-                        Spacer()
-                        
-                        // Quality Badge
-                        if !movie.quality.isEmpty {
-                            Text(movie.quality)
+                    .frame(width: geo.size.width, height: 180)
+                    .clipped()
+                    
+                    // Bottom Gradient
+                    LinearGradient(
+                        colors: [.clear, Color.black.opacity(0.85)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(width: geo.size.width, height: 180)
+                    
+                    // Badges
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text(movie.source.rawValue)
                                 .font(.system(size: 9, weight: .bold))
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 3)
-                                .background(Color.black.opacity(0.85))
-                                .foregroundColor(.appYellow)
-                                .cornerRadius(6)
+                                .background(
+                                    movie.source == .vsphim ?
+                                    LinearGradient(colors: [Color.appAccentBlue, Color.blue], startPoint: .leading, endPoint: .trailing) :
+                                    LinearGradient(colors: [Color.appAccentPurple, Color.pink], startPoint: .leading, endPoint: .trailing)
+                                )
+                                .foregroundColor(.white)
+                                .cornerRadius(5)
+                            
+                            Spacer()
+                            
+                            if !movie.quality.isEmpty {
+                                Text(movie.quality)
+                                    .font(.system(size: 8, weight: .bold))
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 2)
+                                    .background(Color.black.opacity(0.85))
+                                    .foregroundColor(.appYellow)
+                                    .cornerRadius(4)
+                            }
                         }
-                    }
-                    .padding(6)
-                    
-                    Spacer()
-                    
-                    if !movie.year.isEmpty {
-                        Text(movie.year)
-                            .font(.system(size: 10))
-                            .foregroundColor(.white.opacity(0.8))
-                            .padding(.horizontal, 8)
-                            .padding(.bottom, 6)
+                        .padding(5)
+                        
+                        Spacer()
+                        
+                        if !movie.year.isEmpty {
+                            Text(movie.year)
+                                .font(.system(size: 9))
+                                .foregroundColor(.white.opacity(0.8))
+                                .padding(.horizontal, 6)
+                                .padding(.bottom, 4)
+                        }
                     }
                 }
             }
-            .frame(height: 200)
-            .cornerRadius(12)
+            .frame(height: 180)
+            .cornerRadius(10)
             .clipped()
             
-            // Title Below Image (Fixed 2-line height for aligned grid)
+            // Title Below Poster
             Text(movie.title)
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: 12, weight: .semibold))
                 .foregroundColor(.white)
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
-                .padding(.horizontal, 8)
-                .padding(.bottom, 8)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 6)
+                .padding(.bottom, 6)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .frame(height: 38, alignment: .topLeading)
+                .frame(height: 32, alignment: .topLeading)
         }
+        .frame(maxWidth: .infinity)
         .background(Color.appCardBg)
-        .cornerRadius(14)
+        .cornerRadius(12)
         .overlay(
-            RoundedRectangle(cornerRadius: 14)
+            RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.appCardBorder, lineWidth: 1)
         )
         .clipped()

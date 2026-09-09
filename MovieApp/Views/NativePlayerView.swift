@@ -22,7 +22,6 @@ struct NativePlayerContainerView: View {
     @State private var useWebViewFallback = false
     @State private var player: AVPlayer?
     @State private var playbackRate: Float = 1.0
-    @State private var isPlaying = true
     @State private var currentTime: Double = 0.0
     @State private var duration: Double = 0.0
     
@@ -55,6 +54,7 @@ struct NativePlayerContainerView: View {
                     VStack {
                         HStack {
                             Button(action: {
+                                rotateToPortrait()
                                 saveProgress()
                                 dismiss()
                             }) {
@@ -101,6 +101,7 @@ struct NativePlayerContainerView: View {
                     }
                 }
                 .onDisappear {
+                    rotateToPortrait()
                     saveProgress()
                     player.pause()
                 }
@@ -109,8 +110,20 @@ struct NativePlayerContainerView: View {
         .navigationBarHidden(true)
         .statusBar(hidden: true)
         .onAppear {
+            rotateToLandscape()
             extractAndPreparePlayer()
         }
+        .onDisappear {
+            rotateToPortrait()
+        }
+    }
+    
+    private func rotateToLandscape() {
+        UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+    }
+    
+    private func rotateToPortrait() {
+        UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
     }
     
     private func extractAndPreparePlayer() {

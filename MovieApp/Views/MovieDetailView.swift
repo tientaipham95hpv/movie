@@ -16,6 +16,16 @@ struct MovieDetailView: View {
         self._movie = State(initialValue: movie)
     }
     
+    private var cleanDescription: String {
+        let text = movie.description
+            .replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
+            .replacingOccurrences(of: "&nbsp;", with: " ")
+            .replacingOccurrences(of: "&quot;", with: "\"")
+            .replacingOccurrences(of: "&amp;", with: "&")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return text.isEmpty ? "Đang cập nhật nội dung..." : text
+    }
+    
     var body: some View {
         ZStack {
             Color.appBackground.ignoresSafeArea()
@@ -32,7 +42,8 @@ struct MovieDetailView: View {
                                 Rectangle().fill(Color.appCardBg)
                             }
                         }
-                        .frame(height: 320)
+                        .frame(height: 300)
+                        .frame(maxWidth: .infinity)
                         .clipped()
                         .overlay(
                             LinearGradient(
@@ -55,7 +66,7 @@ struct MovieDetailView: View {
                                 
                                 if !movie.quality.isEmpty {
                                     Text(movie.quality)
-                                        .font(.system(size: 10, weight: .black))
+                                        .font(.system(size: 10, weight: .bold))
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 4)
                                         .background(Color.black.opacity(0.8))
@@ -71,18 +82,20 @@ struct MovieDetailView: View {
                             }
                             
                             Text(movie.title)
-                                .font(.system(size: 24, weight: .bold))
+                                .font(.system(size: 22, weight: .bold))
                                 .foregroundColor(.white)
                                 .lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
                             
                             if !movie.originalTitle.isEmpty {
                                 Text(movie.originalTitle)
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
+                                    .lineLimit(1)
                             }
                         }
                         .padding(.horizontal)
-                        .padding(.bottom, 12)
+                        .padding(.bottom, 10)
                     }
                     
                     // Main Action Buttons (Play / Favorite / Download)
@@ -172,6 +185,7 @@ struct MovieDetailView: View {
                                 }
                             }
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(14)
                         .glassCard(cornerRadius: 14)
                         
@@ -215,21 +229,22 @@ struct MovieDetailView: View {
                             }
                         }
                         
-                        // Description
-                        if !movie.description.isEmpty {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("Nội Dung Phim")
-                                    .font(.system(size: 17, weight: .bold))
-                                    .foregroundColor(.white)
-                                
-                                Text(movie.description.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression))
-                                    .font(.system(size: 14))
-                                    .lineSpacing(4)
-                                    .foregroundColor(.gray)
-                            }
-                            .padding(14)
-                            .glassCard(cornerRadius: 14)
+                        // Description Card with strict boundary
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Nội Dung Phim")
+                                .font(.system(size: 17, weight: .bold))
+                                .foregroundColor(.white)
+                            
+                            Text(cleanDescription)
+                                .font(.system(size: 14))
+                                .lineSpacing(5)
+                                .foregroundColor(.gray)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(14)
+                        .glassCard(cornerRadius: 14)
                     }
                     .padding(.horizontal)
                 }
