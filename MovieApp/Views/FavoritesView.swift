@@ -49,8 +49,6 @@ struct FavoritesView: View {
     }
     
     private func loadFavorites() {
-        let favoriteIDs = UserDefaults.standard.stringArray(forKey: "FavoriteMovieIDs") ?? []
-        // Note: For persistent offline preview, we can save full metadata or reload
-        // Here we read stored IDs
+        let _ = UserDefaults.standard.stringArray(forKey: "FavoriteMovieIDs") ?? []
     }
 }

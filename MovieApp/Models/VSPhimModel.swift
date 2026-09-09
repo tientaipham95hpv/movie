@@ -66,15 +66,33 @@ public struct VSPhimMovieDetail: Codable {
 }
 
 public struct VSPhimCategory: Codable, Identifiable {
-    public let id: IntOrString?
+    public let idValue: IntOrString?
     public let name: String?
     public let slug: String?
+    
+    public var id: String {
+        return idValue?.stringValue ?? slug ?? UUID().uuidString
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case idValue = "id"
+        case name, slug
+    }
 }
 
 public struct VSPhimCountry: Codable, Identifiable {
-    public let id: IntOrString?
+    public let idValue: IntOrString?
     public let name: String?
     public let slug: String?
+    
+    public var id: String {
+        return idValue?.stringValue ?? slug ?? UUID().uuidString
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case idValue = "id"
+        case name, slug
+    }
 }
 
 public struct VSPhimServerGroup: Codable {
