@@ -1,5 +1,16 @@
 import SwiftUI
 
+struct ResumePlayerView: View {
+    let item: HistoryItem
+    
+    var body: some View {
+        PlayerScreenView(
+            episode: UnifiedEpisode(id: item.episodeID, name: item.episodeName, embedURL: item.embedURL),
+            movieTitle: item.movieTitle
+        )
+    }
+}
+
 struct HomeView: View {
     @State private var selectedSource: MovieSource = .all
     @State private var movies: [UnifiedMovie] = []
@@ -21,31 +32,8 @@ struct HomeView: View {
                 Color.appBackground.ignoresSafeArea()
                 
                 VStack(spacing: 12) {
-                    // Custom Navigation Header
-                    HStack {
-                        HStack(spacing: 8) {
-                            ZStack {
-                                Circle()
-                                    .fill(LinearGradient(colors: [.appAccentBlue, .appAccentPink], startPoint: .topLeading, endPoint: .bottomTrailing))
-                                    .frame(width: 34, height: 34)
-                                Image(systemName: "play.fill")
-                                    .font(.system(size: 14, weight: .bold))
-                                    .foregroundColor(.white)
-                            }
-                            
-                            Text("PHIM HAY")
-                                .font(.system(size: 22, weight: .black, design: .rounded))
-                                .foregroundStyle(
-                                    LinearGradient(colors: [.white, .appAccentBlue], startPoint: .leading, endPoint: .trailing)
-                                )
-                        }
-                        
-                        Spacer()
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 8)
+                    headerView
                     
-                    // Source Selector Bar
                     SourcePicker(selectedSource: $selectedSource)
                         .onChange(of: selectedSource) { _ in
                             loadMovies(reset: true)
@@ -75,8 +63,7 @@ struct HomeView: View {
                                 .padding(.horizontal, 32)
                             Button(action: { loadMovies(reset: true) }) {
                                 Text("Thử Lại")
-                                    .font(.subheadline)
-                                    .fontWeight(.bold)
+                                    .font(.system(size: 14, weight: .bold))
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 24)
                                     .padding(.vertical, 10)
@@ -88,112 +75,10 @@ struct HomeView: View {
                     } else {
                         ScrollView(showsIndicators: false) {
                             VStack(alignment: .leading, spacing: 20) {
-                                // MARK: - Continue Watching Section
                                 if !historyService.historyList.isEmpty {
-                                    VStack(alignment: .leading, spacing: 12) {
-                                        HStack {
-                                            Image(systemName: "clock.arrow.circlepath")
-                                                .foregroundColor(.appAccentPink)
-                                            Text("Xem Tiếp")
-                                                .font(.headline)
-                                                .fontWeight(.bold)
-                                                .foregroundColor(.white)
-                                        }
-                                        .padding(.horizontal)
-                                        
-                                        ScrollView(.horizontal, showsIndicators: false) {
-                                            HStack(spacing: 14) {
-                                                ForEach(historyService.historyList) { item in
-                                                    NavigationLink(destination: ResumePlayerView(item: item)) {
-                                                        VStack(alignment: .leading, spacing: 6) {
-                                                            ZStack(alignment: .bottom) {
-                                                                AsyncImage(url: URL(string: item.posterURL)) { phase in
-                                                                    if let img = phase.image {
-                                                                        img.resizable().aspectRatio(contentMode: .fill)
-                                                                    } else {
-                                                                        Rectangle().fill(Color.appCardBg)
-                                                                    }
-                                                                }
-                                                                .frame(width: 150, height: 95)
-                                                                .cornerRadius(12)
-                                                                .clipped()
-                                                                
-                                                                // Play Overlay
-                                                                Circle()
-                                                                    .fill(Color.black.opacity(0.6))
-                                                                    .frame(width: 36, height: 36)
-                                                                    .overlay(
-                                                                        Image(systemName: "play.fill")
-                                                                            .font(.system(size: 14))
-                                                                            .foregroundColor(.white)
-                                                                    )
-                                                                
-                                                                // Progress Bar
-                                                                GeometryReader { geo in
-                                                                    VStack {
-                                                                        Spacer()
-                                                                        Rectangle()
-                                                                            .fill(LinearGradient(colors: [.appAccentPink, .appAccentPurple], startPoint: .leading, endPoint: .trailing))
-                                                                            .frame(width: geo.size.width * CGFloat(item.progress), height: 4)
-                                                                    }
-                                                                }
-                                                            }
-                                                            .frame(width: 150, height: 95)
-                                                            
-                                                            Text(item.movieTitle)
-                                                                .font(.system(size: 12, weight: .semibold))
-                                                                .lineLimit(1)
-                                                                .foregroundColor(.white)
-                                                            
-                                                            Text(item.episodeName)
-                                                                .font(.system(size: 10))
-                                                                .foregroundColor(.gray)
-                                                        }
-                                                        .frame(width: 150)
-                                                    }
-                                                }
-                                            }
-                                            .padding(.horizontal)
-                                        }
-                                    }
+                                    continueWatchingSection
                                 }
-                                
-                                // MARK: - Main Movie Grid
-                                VStack(alignment: .leading, spacing: 12) {
-                                    HStack {
-                                        Image(systemName: "sparkles")
-                                            .foregroundColor(.appYellow)
-                                        Text("Phim Mới Cập Nhật")
-                                            .font(.headline)
-                                            .fontWeight(.bold)
-                                            .foregroundColor(.white)
-                                        Spacer()
-                                    }
-                                    .padding(.horizontal)
-                                    
-                                    LazyVGrid(columns: columns, spacing: 16) {
-                                        ForEach(movies) { movie in
-                                            NavigationLink(destination: MovieDetailView(movie: movie)) {
-                                                MovieCard(movie: movie)
-                                            }
-                                            .onAppear {
-                                                if movie == movies.last && !isFetchingMore {
-                                                    loadMoreMovies()
-                                                }
-                                            }
-                                        }
-                                    }
-                                    .padding(.horizontal)
-                                }
-                                
-                                if isFetchingMore {
-                                    HStack {
-                                        Spacer()
-                                        ProgressView().tint(.appAccentPurple)
-                                        Spacer()
-                                    }
-                                    .padding()
-                                }
+                                movieGridSection
                             }
                             .padding(.vertical, 8)
                         }
@@ -209,6 +94,133 @@ struct HomeView: View {
                 if movies.isEmpty {
                     loadMovies(reset: true)
                 }
+            }
+        }
+    }
+    
+    private var headerView: some View {
+        HStack {
+            HStack(spacing: 8) {
+                ZStack {
+                    Circle()
+                        .fill(LinearGradient(colors: [.appAccentBlue, .appAccentPink], startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .frame(width: 34, height: 34)
+                    Image(systemName: "play.fill")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.white)
+                }
+                
+                Text("PHIM HAY")
+                    .font(.system(size: 22, weight: .black, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(colors: [.white, .appAccentBlue], startPoint: .leading, endPoint: .trailing)
+                    )
+            }
+            Spacer()
+        }
+        .padding(.horizontal)
+        .padding(.top, 8)
+    }
+    
+    private var continueWatchingSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "clock.arrow.circlepath")
+                    .foregroundColor(.appAccentPink)
+                Text("Xem Tiếp")
+                    .font(.headline)
+                    .foregroundColor(.white)
+            }
+            .padding(.horizontal)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 14) {
+                    ForEach(historyService.historyList) { item in
+                        NavigationLink(destination: ResumePlayerView(item: item)) {
+                            VStack(alignment: .leading, spacing: 6) {
+                                ZStack(alignment: .bottom) {
+                                    AsyncImage(url: URL(string: item.posterURL)) { phase in
+                                        if let img = phase.image {
+                                            img.resizable().aspectRatio(contentMode: .fill)
+                                        } else {
+                                            Rectangle().fill(Color.appCardBg)
+                                        }
+                                    }
+                                    .frame(width: 150, height: 95)
+                                    .cornerRadius(12)
+                                    .clipped()
+                                    
+                                    Circle()
+                                        .fill(Color.black.opacity(0.6))
+                                        .frame(width: 36, height: 36)
+                                        .overlay(
+                                            Image(systemName: "play.fill")
+                                                .font(.system(size: 14))
+                                                .foregroundColor(.white)
+                                        )
+                                    
+                                    GeometryReader { geo in
+                                        VStack {
+                                            Spacer()
+                                            Rectangle()
+                                                .fill(LinearGradient(colors: [.appAccentPink, .appAccentPurple], startPoint: .leading, endPoint: .trailing))
+                                                .frame(width: geo.size.width * CGFloat(item.progress), height: 4)
+                                        }
+                                    }
+                                }
+                                .frame(width: 150, height: 95)
+                                
+                                Text(item.movieTitle)
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .lineLimit(1)
+                                    .foregroundColor(.white)
+                                
+                                Text(item.episodeName)
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.gray)
+                            }
+                            .frame(width: 150)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+            }
+        }
+    }
+    
+    private var movieGridSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "sparkles")
+                    .foregroundColor(.appYellow)
+                Text("Phim Mới Cập Nhật")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                Spacer()
+            }
+            .padding(.horizontal)
+            
+            LazyVGrid(columns: columns, spacing: 16) {
+                ForEach(movies) { movie in
+                    NavigationLink(destination: MovieDetailView(movie: movie)) {
+                        MovieCard(movie: movie)
+                    }
+                    .onAppear {
+                        if movie == movies.last && !isFetchingMore {
+                            loadMoreMovies()
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal)
+            
+            if isFetchingMore {
+                HStack {
+                    Spacer()
+                    ProgressView().tint(.appAccentPurple)
+                    Spacer()
+                }
+                .padding()
             }
         }
     }

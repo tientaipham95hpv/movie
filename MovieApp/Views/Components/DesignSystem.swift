@@ -77,8 +77,7 @@ public struct PrimaryGradientButton: View {
                 Image(systemName: icon)
                     .font(.headline)
                 Text(title)
-                    .font(.headline)
-                    .fontWeight(.bold)
+                    .font(.system(size: 16, weight: .bold))
             }
             .foregroundColor(.white)
             .padding(.horizontal, 24)

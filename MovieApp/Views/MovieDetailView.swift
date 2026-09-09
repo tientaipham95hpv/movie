@@ -96,7 +96,7 @@ struct MovieDetailView: View {
                                     HStack {
                                         Image(systemName: "play.fill")
                                         Text("Xem Phim")
-                                            .fontWeight(.bold)
+                                            .font(.system(size: 16, weight: .bold))
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 14)
@@ -180,8 +180,7 @@ struct MovieDetailView: View {
                             VStack(alignment: .leading, spacing: 12) {
                                 HStack {
                                     Text("Danh Sách Tập")
-                                        .font(.headline)
-                                        .fontWeight(.bold)
+                                        .font(.system(size: 17, weight: .bold))
                                         .foregroundColor(.white)
                                     Spacer()
                                     Text("\(movie.episodes.count) tập")
@@ -220,8 +219,7 @@ struct MovieDetailView: View {
                         if !movie.description.isEmpty {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Nội Dung Phim")
-                                    .font(.headline)
-                                    .fontWeight(.bold)
+                                    .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 
                                 Text(movie.description.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression))

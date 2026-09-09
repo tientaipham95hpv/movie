@@ -84,8 +84,7 @@ struct NativePlayerContainerView: View {
                                 }
                             } label: {
                                 Text("\(String(format: "%.1fx", playbackRate))")
-                                    .font(.caption)
-                                    .fontWeight(.bold)
+                                    .font(.system(size: 12, weight: .bold))
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
                                     .background(Color.white.opacity(0.3))

@@ -17,8 +17,7 @@ struct LockScreenView: View {
                     .padding()
                 
                 Text("Phim Hay Ứng Dụng Đã Khóa")
-                    .font(.title2)
-                    .fontWeight(.bold)
+                    .font(.system(size: 22, weight: .bold))
                     .foregroundColor(.white)
                 
                 Text("Vui lòng xác thực bằng Face ID hoặc Touch ID để tiếp tục.")

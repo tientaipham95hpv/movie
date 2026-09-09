@@ -85,8 +85,7 @@ struct SearchView: View {
                             }
                             
                             Text("Tìm Kiếm Phim Trực Tuyến")
-                                .font(.title3)
-                                .fontWeight(.bold)
+                                .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
                             
                             Text("Tìm kiếm phim bộ, phim lẻ từ VSPHIM và AVDB")

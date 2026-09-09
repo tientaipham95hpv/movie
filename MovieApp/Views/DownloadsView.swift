@@ -25,8 +25,7 @@ struct DownloadsView: View {
                         HStack(spacing: 12) {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text("Đang tải tập phim...")
-                                    .font(.caption)
-                                    .fontWeight(.bold)
+                                    .font(.system(size: 12, weight: .bold))
                                     .foregroundColor(.white)
                                 ProgressView(value: downloadManager.currentDownloadProgress)
                                     .tint(.appAccentBlue)
@@ -34,8 +33,7 @@ struct DownloadsView: View {
                             Button("Hủy") {
                                 downloadManager.cancelDownload()
                             }
-                            .font(.caption)
-                            .fontWeight(.bold)
+                            .font(.system(size: 12, weight: .bold))
                             .foregroundColor(.appAccentPink)
                         }
                         .padding(14)
