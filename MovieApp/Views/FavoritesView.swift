@@ -2,46 +2,64 @@ import SwiftUI
 
 struct FavoritesView: View {
     @State private var favoriteMovies: [UnifiedMovie] = []
-    @State private var isLoading = false
     
     private let columns = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
+        GridItem(.flexible(), spacing: 14),
+        GridItem(.flexible(), spacing: 14)
     ]
     
     var body: some View {
         NavigationView {
-            VStack {
-                if favoriteMovies.isEmpty {
-                    Spacer()
-                    VStack(spacing: 12) {
-                        Image(systemName: "heart.slash")
-                            .font(.system(size: 48))
-                            .foregroundColor(.gray)
-                        Text("Chưa có phim yêu thích")
-                            .font(.headline)
-                        Text("Nhấn biểu tượng trái tim ở trang chi tiết phim để lưu vào đây.")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 32)
+            ZStack {
+                Color.appBackground.ignoresSafeArea()
+                
+                VStack(spacing: 14) {
+                    // Header
+                    HStack {
+                        Text("Phim Yêu Thích")
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundColor(.white)
+                        Spacer()
                     }
-                    Spacer()
-                } else {
-                    ScrollView {
-                        LazyVGrid(columns: columns, spacing: 14) {
-                            ForEach(favoriteMovies) { movie in
-                                NavigationLink(destination: MovieDetailView(movie: movie)) {
-                                    MovieCard(movie: movie)
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+                    
+                    if favoriteMovies.isEmpty {
+                        Spacer()
+                        VStack(spacing: 12) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.appCardBg)
+                                    .frame(width: 80, height: 80)
+                                Image(systemName: "heart.slash")
+                                    .font(.system(size: 36))
+                                    .foregroundColor(.appAccentPink)
+                            }
+                            Text("Chưa Có Phim Yêu Thích")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            Text("Nhấn vào biểu tượng trái tim ở trang chi tiết phim để lưu bộ phim bạn yêu thích vào đây.")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 32)
+                        }
+                        Spacer()
+                    } else {
+                        ScrollView(showsIndicators: false) {
+                            LazyVGrid(columns: columns, spacing: 16) {
+                                ForEach(favoriteMovies) { movie in
+                                    NavigationLink(destination: MovieDetailView(movie: movie)) {
+                                        MovieCard(movie: movie)
+                                    }
                                 }
                             }
+                            .padding(.horizontal)
                         }
-                        .padding()
                     }
                 }
             }
-            .navigationTitle("Yêu Thích")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarHidden(true)
             .onAppear {
                 loadFavorites()
             }

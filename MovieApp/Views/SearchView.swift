@@ -8,82 +8,108 @@ struct SearchView: View {
     @State private var errorMessage: String?
     
     private let columns = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
+        GridItem(.flexible(), spacing: 14),
+        GridItem(.flexible(), spacing: 14)
     ]
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 12) {
-                // Search Bar
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.gray)
-                    TextField("Nhập tên phim, diễn viên...", text: $query)
-                        .onSubmit {
-                            performSearch()
-                        }
-                    if !query.isEmpty {
-                        Button(action: { query = ""; searchResults = [] }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.gray)
-                        }
-                    }
-                }
-                .padding(10)
-                .background(Color(UIColor.tertiarySystemFill))
-                .cornerRadius(10)
-                .padding(.horizontal)
+            ZStack {
+                Color.appBackground.ignoresSafeArea()
                 
-                // Source Selector
-                SourcePicker(selectedSource: $selectedSource)
-                    .onChange(of: selectedSource) { _ in
-                        if !query.isEmpty { performSearch() }
-                    }
-                
-                if isSearching {
-                    Spacer()
-                    ProgressView("Đang tìm kiếm...")
-                    Spacer()
-                } else if searchResults.isEmpty && !query.isEmpty {
-                    Spacer()
-                    VStack(spacing: 8) {
-                        Image(systemName: "film.stack")
-                            .font(.largeTitle)
-                            .foregroundColor(.gray)
-                        Text("Không tìm thấy kết quả nào cho '\(query)'")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                    Spacer()
-                } else if searchResults.isEmpty {
-                    Spacer()
-                    VStack(spacing: 8) {
-                        Image(systemName: "magnifyingglass.circle")
-                            .font(.system(size: 50))
-                            .foregroundColor(.blue.opacity(0.7))
-                        Text("Tìm Kiếm Phim Trực Tuyến")
+                VStack(spacing: 14) {
+                    // Glass Search Bar
+                    HStack(spacing: 10) {
+                        Image(systemName: "magnifyingglass")
                             .font(.headline)
-                        Text("Hỗ trợ tìm kiếm từ VSPHIM và AVDB API")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    Spacer()
-                } else {
-                    ScrollView {
-                        LazyVGrid(columns: columns, spacing: 14) {
-                            ForEach(searchResults) { movie in
-                                NavigationLink(destination: MovieDetailView(movie: movie)) {
-                                    MovieCard(movie: movie)
-                                }
+                            .foregroundColor(.appAccentBlue)
+                        
+                        TextField("Nhập tên phim, diễn viên...", text: $query)
+                            .font(.system(size: 15))
+                            .foregroundColor(.white)
+                            .onSubmit {
+                                performSearch()
+                            }
+                        
+                        if !query.isEmpty {
+                            Button(action: { query = ""; searchResults = [] }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(.gray)
                             }
                         }
-                        .padding(.horizontal)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 12)
+                    .glassCard(cornerRadius: 20)
+                    .padding(.horizontal)
+                    
+                    // Source Picker
+                    SourcePicker(selectedSource: $selectedSource)
+                        .onChange(of: selectedSource) { _ in
+                            if !query.isEmpty { performSearch() }
+                        }
+                    
+                    if isSearching {
+                        Spacer()
+                        VStack(spacing: 12) {
+                            ProgressView().tint(.appAccentPurple).scaleEffect(1.2)
+                            Text("Đang tìm kiếm phim...")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                        }
+                        Spacer()
+                    } else if searchResults.isEmpty && !query.isEmpty {
+                        Spacer()
+                        VStack(spacing: 10) {
+                            Image(systemName: "film.stack")
+                                .font(.system(size: 48))
+                                .foregroundColor(.gray.opacity(0.6))
+                            Text("Không tìm thấy phim '\(query)'")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            Text("Thử tìm kiếm với từ khóa khác hoặc chuyển nguồn API")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                        Spacer()
+                    } else if searchResults.isEmpty {
+                        Spacer()
+                        VStack(spacing: 12) {
+                            ZStack {
+                                Circle()
+                                    .fill(LinearGradient(colors: [.appAccentBlue.opacity(0.2), .appAccentPurple.opacity(0.2)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                    .frame(width: 90, height: 90)
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 36))
+                                    .foregroundColor(.appAccentBlue)
+                            }
+                            
+                            Text("Tìm Kiếm Phim Trực Tuyến")
+                                .font(.title3)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                            
+                            Text("Tìm kiếm phim bộ, phim lẻ từ VSPHIM và AVDB")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                        Spacer()
+                    } else {
+                        ScrollView(showsIndicators: false) {
+                            LazyVGrid(columns: columns, spacing: 16) {
+                                ForEach(searchResults) { movie in
+                                    NavigationLink(destination: MovieDetailView(movie: movie)) {
+                                        MovieCard(movie: movie)
+                                    }
+                                }
+                            }
+                            .padding(.horizontal)
+                            .padding(.top, 4)
+                        }
                     }
                 }
             }
-            .navigationTitle("Tìm Kiếm")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarHidden(true)
         }
     }
     

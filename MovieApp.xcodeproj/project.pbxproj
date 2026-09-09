@@ -29,6 +29,7 @@
 		AA1000152C8F000100000015 /* DownloadsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2000152C8F000100000015 /* DownloadsView.swift */; };
 		AA1000162C8F000100000016 /* LockScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2000162C8F000100000016 /* LockScreenView.swift */; };
 		AA1000172C8F000100000017 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2000172C8F000100000017 /* SettingsView.swift */; };
+		AA1000182C8F000100000018 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2000182C8F000100000018 /* DesignSystem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +57,7 @@
 		AA2000152C8F000100000015 /* DownloadsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/DownloadsView.swift; sourceTree = "<group>"; };
 		AA2000162C8F000100000016 /* LockScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/LockScreenView.swift; sourceTree = "<group>"; };
 		AA2000172C8F000100000017 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SettingsView.swift; sourceTree = "<group>"; };
+		AA2000182C8F000100000018 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/DesignSystem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 				AA2000152C8F000100000015 /* DownloadsView.swift */,
 				AA2000162C8F000100000016 /* LockScreenView.swift */,
 				AA2000172C8F000100000017 /* SettingsView.swift */,
+				AA2000182C8F000100000018 /* DesignSystem.swift */,
 			);
 			path = MovieApp;
 			sourceTree = "<group>";
@@ -186,6 +189,7 @@
 				AA1000152C8F000100000015 /* DownloadsView.swift in Sources */,
 				AA1000162C8F000100000016 /* LockScreenView.swift in Sources */,
 				AA1000172C8F000100000017 /* SettingsView.swift in Sources */,
+				AA1000182C8F000100000018 /* DesignSystem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

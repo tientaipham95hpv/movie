@@ -4,72 +4,101 @@ struct MovieCard: View {
     let movie: UnifiedMovie
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            ZStack(alignment: .topTrailing) {
+        VStack(alignment: .leading, spacing: 8) {
+            ZStack(alignment: .bottomLeading) {
+                // Poster Image
                 AsyncImage(url: URL(string: movie.thumbURL.isEmpty ? movie.posterURL : movie.thumbURL)) { phase in
                     switch phase {
                     case .empty:
                         Rectangle()
-                            .fill(Color.gray.opacity(0.2))
-                            .overlay(ProgressView())
+                            .fill(Color.appCardBg)
+                            .overlay(ProgressView().tint(.white))
                     case .success(let image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                     case .failure:
                         Rectangle()
-                            .fill(Color.gray.opacity(0.3))
+                            .fill(Color.appCardBg)
                             .overlay(
                                 Image(systemName: "film")
-                                    .font(.largeTitle)
-                                    .foregroundColor(.gray)
+                                    .font(.system(size: 32))
+                                    .foregroundColor(.gray.opacity(0.6))
                             )
                     @unknown default:
                         EmptyView()
                     }
                 }
-                .frame(height: 200)
-                .cornerRadius(12)
+                .frame(height: 220)
                 .clipped()
+                .cornerRadius(14)
                 
-                // Source & Quality Badge
-                HStack(spacing: 4) {
-                    Text(movie.source.rawValue)
-                        .font(.caption2)
-                        .fontWeight(.bold)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 3)
-                        .background(movie.source == .vsphim ? Color.blue.opacity(0.85) : Color.purple.opacity(0.85))
-                        .foregroundColor(.white)
-                        .cornerRadius(6)
+                // Bottom Gradient Overlay for readability
+                LinearGradient(
+                    colors: [.clear, Color.black.opacity(0.8)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .cornerRadius(14)
+                
+                // Badges Overlay (Top Right & Bottom Left)
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        // Source Badge
+                        Text(movie.source.rawValue)
+                            .font(.system(size: 10, weight: .bold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                movie.source == .vsphim ?
+                                LinearGradient(colors: [Color.appAccentBlue, Color.blue], startPoint: .leading, endPoint: .trailing) :
+                                LinearGradient(colors: [Color.appAccentPurple, Color.pink], startPoint: .leading, endPoint: .trailing)
+                            )
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                            .shadow(radius: 4)
+                        
+                        Spacer()
+                        
+                        // Quality Badge
+                        if !movie.quality.isEmpty {
+                            Text(movie.quality)
+                                .font(.system(size: 9, weight: .black))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 3)
+                                .background(Color.black.opacity(0.85))
+                                .foregroundColor(.appYellow)
+                                .cornerRadius(6)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .stroke(Color.appYellow.opacity(0.4), lineWidth: 1)
+                                )
+                        }
+                    }
+                    .padding(8)
                     
-                    if !movie.quality.isEmpty {
-                        Text(movie.quality)
-                            .font(.caption2)
-                            .fontWeight(.bold)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 3)
-                            .background(Color.black.opacity(0.75))
-                            .foregroundColor(.yellow)
-                            .cornerRadius(6)
+                    Spacer()
+                    
+                    // Year Badge
+                    if !movie.year.isEmpty {
+                        Text(movie.year)
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(.white.opacity(0.8))
+                            .padding(.horizontal, 8)
+                            .padding(.bottom, 6)
                     }
                 }
-                .padding(6)
             }
+            .frame(height: 220)
             
+            // Title
             Text(movie.title)
-                .font(.subheadline)
-                .fontWeight(.semibold)
+                .font(.system(size: 14, weight: .semibold))
                 .lineLimit(2)
-                .foregroundColor(.primary)
-            
-            if !movie.year.isEmpty {
-                Text(movie.year)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
+                .foregroundColor(.white)
+                .padding(.horizontal, 4)
+                .padding(.bottom, 4)
         }
-        .background(Color(UIColor.secondarySystemBackground).opacity(0.5))
-        .cornerRadius(12)
+        .glassCard(cornerRadius: 16)
     }
 }
