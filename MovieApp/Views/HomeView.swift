@@ -141,7 +141,10 @@ struct HomeView: View {
                             VStack(alignment: .leading, spacing: 6) {
                                 ZStack(alignment: .bottom) {
                                     CachedAsyncImage(urlString: item.posterURL) { img in
-                                        img.resizable().aspectRatio(contentMode: .fill)
+                                        img.resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 145, height: 90)
+                                            .clipped()
                                     } placeholder: {
                                         Rectangle().fill(Color.appCardBg)
                                     }

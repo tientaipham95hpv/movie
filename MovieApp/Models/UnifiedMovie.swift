@@ -107,15 +107,19 @@ public struct UnifiedMovie: Identifiable, Codable, Hashable {
         self.title = item.name ?? "Không có tiêu đề"
         self.originalTitle = item.origin_name ?? ""
         self.slug = item.slug ?? ""
-        self.posterURL = UnifiedMovie.cleanImageURL(item.poster_url, baseURL: "https://avdbapi.com")
-        self.thumbURL = UnifiedMovie.cleanImageURL(item.thumb_url ?? item.poster_url, baseURL: "https://avdbapi.com")
-        self.year = item.year ?? ""
+        
+        let rawPic = item.vod_pic ?? item.poster_url ?? item.vod_pic_thumb ?? item.thumb_url ?? item.vod_pic_slide
+        let rawThumb = item.vod_pic_thumb ?? item.thumb_url ?? item.vod_pic ?? item.poster_url
+        
+        self.posterURL = UnifiedMovie.cleanImageURL(rawPic, baseURL: "https://avdbapi.com")
+        self.thumbURL = UnifiedMovie.cleanImageURL(rawThumb ?? rawPic, baseURL: "https://avdbapi.com")
+        self.year = item.year?.stringValue ?? ""
         self.quality = item.quality ?? "FHD"
-        self.category = item.category ?? []
-        self.country = item.country ?? []
-        self.actor = item.actor ?? []
+        self.category = item.category?.arrayValue ?? []
+        self.country = item.country?.arrayValue ?? []
+        self.actor = item.actor?.arrayValue ?? []
         self.description = item.description ?? ""
-        self.duration = ""
+        self.duration = item.vod_time ?? ""
         
         var eps: [UnifiedEpisode] = []
         if let serverData = item.episodes?.server_data {
@@ -123,6 +127,25 @@ public struct UnifiedMovie: Identifiable, Codable, Hashable {
             for (key, ep) in serverData {
                 if let link = ep.link_embed, !link.isEmpty {
                     eps.append(UnifiedEpisode(name: key, embedURL: link, serverName: serverName))
+                }
+            }
+        } else if let playUrl = item.vod_play_url, !playUrl.isEmpty {
+            let serverNames = item.vod_play_from?.components(separatedBy: "$$$") ?? ["VIP"]
+            let serverGroups = playUrl.components(separatedBy: "$$$")
+            for (idx, groupStr) in serverGroups.enumerated() {
+                let sName = idx < serverNames.count ? serverNames[idx] : "VIP"
+                let epItems = groupStr.components(separatedBy: "#")
+                for epStr in epItems {
+                    let parts = epStr.components(separatedBy: "$")
+                    if parts.count >= 2 {
+                        let epName = parts[0].trimmingCharacters(in: .whitespacesAndNewlines)
+                        let epLink = parts[1].trimmingCharacters(in: .whitespacesAndNewlines)
+                        if !epLink.isEmpty {
+                            eps.append(UnifiedEpisode(name: epName.isEmpty ? "Full" : epName, embedURL: epLink, serverName: sName))
+                        }
+                    } else if parts.count == 1 && !parts[0].isEmpty {
+                        eps.append(UnifiedEpisode(name: "Full", embedURL: parts[0], serverName: sName))
+                    }
                 }
             }
         }
@@ -140,6 +163,9 @@ public struct UnifiedMovie: Identifiable, Codable, Hashable {
         }
         if !url.hasPrefix("http://") && !url.hasPrefix("https://") {
             return "https://" + url
+        }
+        if url.hasPrefix("http://") {
+            url = url.replacingOccurrences(of: "http://", with: "https://")
         }
         return url
     }

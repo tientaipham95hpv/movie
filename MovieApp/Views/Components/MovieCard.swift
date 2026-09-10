@@ -15,9 +15,20 @@ struct MovieCard: View {
                             .frame(width: geo.size.width, height: 180)
                             .clipped()
                     } placeholder: {
-                        Rectangle()
-                            .fill(Color.appCardBg)
-                            .overlay(ProgressView().tint(.white))
+                        ZStack {
+                            Color.appCardBg
+                            VStack(spacing: 8) {
+                                Image(systemName: "film")
+                                    .font(.system(size: 26))
+                                    .foregroundColor(.appAccentPurple.opacity(0.8))
+                                Text(movie.title)
+                                    .font(.system(size: 10, weight: .semibold))
+                                    .foregroundColor(.gray)
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 6)
+                            }
+                        }
                     }
                     .frame(width: geo.size.width, height: 180)
                     .clipped()

@@ -34,14 +34,17 @@ struct MovieDetailView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     // Hero Poster Backdrop Banner
                     ZStack(alignment: .bottomLeading) {
-                        CachedAsyncImage(urlString: movie.posterURL.isEmpty ? movie.thumbURL : movie.posterURL) { img in
-                            img.resizable().aspectRatio(contentMode: .fill)
-                        } placeholder: {
-                            Rectangle().fill(Color.appCardBg)
+                        GeometryReader { geo in
+                            CachedAsyncImage(urlString: movie.posterURL.isEmpty ? movie.thumbURL : movie.posterURL) { img in
+                                img.resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: geo.size.width, height: 300)
+                                    .clipped()
+                            } placeholder: {
+                                Rectangle().fill(Color.appCardBg)
+                            }
                         }
                         .frame(height: 300)
-                        .frame(maxWidth: .infinity)
-                        .clipped()
                         .overlay(
                             LinearGradient(
                                 colors: [.clear, Color.appBackground.opacity(0.6), Color.appBackground],
