@@ -190,5 +190,7 @@ public struct AVDBEpisodesContainer: Codable {
 public struct AVDBEpisodeDetail: Codable {
     public let slug: String?
     public let link_embed: String?
+    public let link_m3u8: String?
+    public let url: String?
 }
 

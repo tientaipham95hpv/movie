@@ -125,7 +125,8 @@ public struct UnifiedMovie: Identifiable, Codable, Hashable {
         if let serverData = item.episodes?.server_data {
             let serverName = item.episodes?.server_name ?? "VIP"
             for (key, ep) in serverData {
-                if let link = ep.link_embed, !link.isEmpty {
+                let candidate = ep.link_m3u8 ?? ep.url ?? ep.link_embed
+                if let link = candidate?.trimmingCharacters(in: .whitespacesAndNewlines), !link.isEmpty {
                     eps.append(UnifiedEpisode(name: key, embedURL: link, serverName: serverName))
                 }
             }
