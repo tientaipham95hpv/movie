@@ -49,6 +49,38 @@ struct SearchView: View {
                             if !query.isEmpty { performSearch() }
                         }
                     
+                    // Popular Category & Actor Quick Filters
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(["Miu Shiramine", "Hentai", "Chinese AV", "Uncensored", "Vietsub", "Y Tá", "Văn Phòng", "Học Đường"], id: \.self) { filter in
+                                Button(action: {
+                                    query = filter
+                                    performSearch()
+                                }) {
+                                    HStack(spacing: 4) {
+                                        if filter == "Miu Shiramine" {
+                                            Image(systemName: "star.fill")
+                                                .font(.system(size: 10))
+                                                .foregroundColor(.appYellow)
+                                        }
+                                        Text(filter)
+                                            .font(.system(size: 12, weight: .semibold))
+                                    }
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(query == filter ? Color.appAccentBlue : Color.appCardBg)
+                                    .foregroundColor(query == filter ? .white : .gray)
+                                    .cornerRadius(12)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(query == filter ? Color.clear : Color.appCardBorder, lineWidth: 1)
+                                    )
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    
                     if isSearching {
                         Spacer()
                         VStack(spacing: 12) {

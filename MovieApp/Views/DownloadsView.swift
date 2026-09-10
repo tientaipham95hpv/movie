@@ -24,7 +24,7 @@ struct DownloadsView: View {
                     if downloadManager.isDownloading {
                         HStack(spacing: 12) {
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("Đang tải tập phim...")
+                                Text(downloadManager.statusMessage.isEmpty ? "Đang tải tập phim..." : downloadManager.statusMessage)
                                     .font(.system(size: 12, weight: .bold))
                                     .foregroundColor(.white)
                                 ProgressView(value: downloadManager.currentDownloadProgress)
