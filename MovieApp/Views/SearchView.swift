@@ -49,36 +49,62 @@ struct SearchView: View {
                             if !query.isEmpty { performSearch() }
                         }
                     
-                    // Popular Category & Actor Quick Filters
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(["Miu Shiramine", "Hentai", "Chinese AV", "Uncensored", "Vietsub", "Y Tá", "Văn Phòng", "Học Đường"], id: \.self) { filter in
-                                Button(action: {
-                                    query = filter
-                                    performSearch()
-                                }) {
-                                    HStack(spacing: 4) {
-                                        if filter == "Miu Shiramine" {
-                                            Image(systemName: "star.fill")
-                                                .font(.system(size: 10))
-                                                .foregroundColor(.appYellow)
-                                        }
-                                        Text(filter)
+                    // Category & Actor Quick Filter Chips
+                    VStack(alignment: .leading, spacing: 8) {
+                        // Category Chips Row
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(["Vietsub", "Uncensored", "Chinese AV", "Hentai", "Hành Động", "Tình Cảm", "Học Đường", "Văn Phòng", "Y Tá", "Gia Đình", "Hài Hước"], id: \.self) { cat in
+                                    Button(action: {
+                                        query = cat
+                                        performSearch()
+                                    }) {
+                                        Text(cat)
                                             .font(.system(size: 12, weight: .semibold))
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 6)
+                                            .background(query == cat ? Color.appAccentBlue : Color.appCardBg)
+                                            .foregroundColor(query == cat ? .white : .gray)
+                                            .cornerRadius(12)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(query == cat ? Color.clear : Color.appCardBorder, lineWidth: 1)
+                                            )
                                     }
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(query == filter ? Color.appAccentBlue : Color.appCardBg)
-                                    .foregroundColor(query == filter ? .white : .gray)
-                                    .cornerRadius(12)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(query == filter ? Color.clear : Color.appCardBorder, lineWidth: 1)
-                                    )
                                 }
                             }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
+                        
+                        // Top Actors Row
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(["Miu Shiramine", "Yua Mikami", "Eimi Fukada", "Yui Hatano", "Riri Nanatsumori", "Karen Kaede", "Saika Kawakita", "Remu Suzumori"], id: \.self) { actor in
+                                    Button(action: {
+                                        query = actor
+                                        performSearch()
+                                    }) {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "star.fill")
+                                                .font(.system(size: 9))
+                                                .foregroundColor(.appYellow)
+                                            Text(actor)
+                                                .font(.system(size: 12, weight: .semibold))
+                                        }
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(query == actor ? Color.appAccentPurple : Color.appCardBg)
+                                        .foregroundColor(query == actor ? .white : .gray)
+                                        .cornerRadius(12)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(query == actor ? Color.clear : Color.appCardBorder, lineWidth: 1)
+                                        )
+                                    }
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
                     }
                     
                     if isSearching {

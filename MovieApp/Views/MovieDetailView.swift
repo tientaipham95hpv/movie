@@ -135,31 +135,6 @@ struct MovieDetailView: View {
                                             .stroke(isFavorite ? Color.appAccentPink.opacity(0.6) : Color.appCardBorder, lineWidth: 1)
                                     )
                             }
-                            
-                            // Download Button
-                            if let ep = selectedEpisode ?? movie.episodes.first {
-                                Button(action: {
-                                    Task {
-                                        let extracted = await HLSExtractorService.shared.extractStreamURL(from: ep.embedURL)
-                                        let targetURL = extracted ?? ep.embedURL
-                                        await MainActor.run {
-                                            downloadManager.startDownload(movie: movie, episode: ep, streamURL: targetURL)
-                                            isDownloading = true
-                                        }
-                                    }
-                                }) {
-                                    Image(systemName: isDownloading ? "arrow.down.circle.fill" : "arrow.down.circle")
-                                        .font(.title3)
-                                        .foregroundColor(isDownloading ? .appAccentBlue : .white)
-                                        .frame(width: 50, height: 50)
-                                        .background(Color.appCardBg)
-                                        .cornerRadius(16)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 16)
-                                                .stroke(Color.appCardBorder, lineWidth: 1)
-                                        )
-                                }
-                            }
                         }
                         
                         // Metadata Details
@@ -259,7 +234,7 @@ struct MovieDetailView: View {
         }
         .fullScreenCover(isPresented: $isPlaying) {
             if let ep = selectedEpisode ?? movie.episodes.first {
-                NativePlayerContainerView(movie: movie, episode: ep)
+                PlayerScreenView(episode: ep, movieTitle: movie.title)
             }
         }
     }

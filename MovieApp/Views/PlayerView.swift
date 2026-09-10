@@ -84,7 +84,6 @@ struct PlayerScreenView: View {
             // Header back button & title
             HStack {
                 Button(action: {
-                    rotateToPortrait()
                     dismiss()
                 }) {
                     Image(systemName: "chevron.left.circle.fill")
@@ -106,19 +105,5 @@ struct PlayerScreenView: View {
         }
         .navigationBarHidden(true)
         .statusBar(hidden: true)
-        .onAppear {
-            rotateToLandscape()
-        }
-        .onDisappear {
-            rotateToPortrait()
-        }
-    }
-    
-    private func rotateToLandscape() {
-        forceOrientation(.landscapeRight)
-    }
-    
-    private func rotateToPortrait() {
-        forceOrientation(.portrait)
     }
 }

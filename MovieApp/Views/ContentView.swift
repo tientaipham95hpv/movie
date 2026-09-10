@@ -35,23 +35,17 @@ struct ContentView: View {
                     }
                     .tag(1)
                 
-                DownloadsView()
-                    .tabItem {
-                        Label("Đã Tải", systemImage: "arrow.down.circle.fill")
-                    }
-                    .tag(2)
-                
                 FavoritesView()
                     .tabItem {
                         Label("Yêu Thích", systemImage: "heart.fill")
                     }
-                    .tag(3)
+                    .tag(2)
                 
                 SettingsView()
                     .tabItem {
                         Label("Cài Đặt", systemImage: "gearshape.fill")
                     }
-                    .tag(4)
+                    .tag(3)
             }
             .accentColor(.appAccentBlue)
             
