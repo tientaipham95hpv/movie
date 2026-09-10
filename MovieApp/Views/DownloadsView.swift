@@ -125,10 +125,18 @@ struct DownloadsView: View {
                 downloadManager.loadDownloads()
             }
             .fullScreenCover(item: $playingDownload) { item in
-                let player = AVPlayer(url: URL(fileURLWithPath: item.localFilePath))
-                VideoPlayer(player: player)
-                    .edgesIgnoringSafeArea(.all)
-                    .onAppear { player.play() }
+                let offlineEp = UnifiedEpisode(name: item.episodeName, embedURL: item.localFilePath, serverName: "Offline")
+                let offlineMovie = UnifiedMovie(
+                    id: item.movieID,
+                    source: .vsphim,
+                    rawID: item.movieID,
+                    title: item.movieTitle,
+                    slug: "",
+                    posterURL: item.posterURL,
+                    thumbURL: item.posterURL,
+                    episodes: [offlineEp]
+                )
+                NativePlayerContainerView(movie: offlineMovie, episode: offlineEp)
             }
         }
         .navigationViewStyle(.stack)

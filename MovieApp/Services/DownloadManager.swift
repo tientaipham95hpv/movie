@@ -103,6 +103,9 @@ public class DownloadManager: NSObject, ObservableObject {
         
         var request = URLRequest(url: m3u8URL)
         request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
+        if let host = m3u8URL.host {
+            request.addValue("https://\(host)/", forHTTPHeaderField: "Referer")
+        }
         
         guard let (data, _) = try? await URLSession.shared.data(for: request),
               let playlistText = String(data: data, encoding: .utf8) else {
@@ -184,6 +187,9 @@ public class DownloadManager: NSObject, ObservableObject {
             
             var segReq = URLRequest(url: segURL)
             segReq.addValue(userAgent, forHTTPHeaderField: "User-Agent")
+            if let host = segURL.host {
+                segReq.addValue("https://\(host)/", forHTTPHeaderField: "Referer")
+            }
             
             var fetchedData: Data? = nil
             for _ in 0..<3 {

@@ -334,7 +334,30 @@ struct NativePlayerContainerView: View {
     
     private func extractAndPreparePlayer() {
         Task {
-            if let directURL = await HLSExtractorService.shared.extractStreamURL(from: episode.embedURL),
+            let embed = episode.embedURL
+            // Check if it is a local offline file path
+            if embed.hasPrefix("file://") || FileManager.default.fileExists(atPath: embed) {
+                let fileURL = embed.hasPrefix("file://") ? (URL(string: embed) ?? URL(fileURLWithPath: embed)) : URL(fileURLWithPath: embed)
+                await MainActor.run {
+                    self.streamURL = embed
+                    let avPlayer = AVPlayer(url: fileURL)
+                    self.player = avPlayer
+                    self.isLoading = false
+                    self.isPlaying = true
+                    avPlayer.play()
+                    
+                    avPlayer.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1), queue: .main) { time in
+                        if let item = avPlayer.currentItem {
+                            self.currentTime = time.seconds
+                            let d = item.duration.seconds
+                            self.duration = d.isNaN || d.isInfinite ? 0 : d
+                        }
+                    }
+                }
+                return
+            }
+            
+            if let directURL = await HLSExtractorService.shared.extractStreamURL(from: embed),
                let url = URL(string: directURL) {
                 await MainActor.run {
                     self.streamURL = directURL

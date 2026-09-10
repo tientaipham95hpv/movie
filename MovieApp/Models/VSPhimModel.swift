@@ -105,6 +105,7 @@ public struct VSPhimEpisodeData: Codable {
     public let slug: String?
     public let filename: String?
     public let link_embed: String?
+    public let link_m3u8: String?
 }
 
 // Flexible Helper for String or Int JSON keys

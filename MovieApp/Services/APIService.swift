@@ -126,8 +126,11 @@ public class APIService: ObservableObject {
                     let sName = group.server_name ?? "VIP"
                     if let listData = group.server_data {
                         for item in listData {
-                            if let embed = item.link_embed, !embed.isEmpty {
-                                eps.append(UnifiedEpisode(name: item.name ?? "Tập Full", embedURL: embed, serverName: sName))
+                            let m3u8Str = item.link_m3u8?.trimmingCharacters(in: .whitespacesAndNewlines)
+                            let embedStr = item.link_embed?.trimmingCharacters(in: .whitespacesAndNewlines)
+                            let targetURL = (m3u8Str != nil && !m3u8Str!.isEmpty) ? m3u8Str! : (embedStr ?? "")
+                            if !targetURL.isEmpty {
+                                eps.append(UnifiedEpisode(name: item.name ?? "Tập Full", embedURL: targetURL, serverName: sName))
                             }
                         }
                     }
