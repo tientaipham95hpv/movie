@@ -1,7 +1,7 @@
 import SwiftUI
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    static var orientationLock = UIInterfaceOrientationMask.all
+    static var orientationLock: UIInterfaceOrientationMask = UIDevice.current.userInterfaceIdiom == .pad ? .all : .portrait
     
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return AppDelegate.orientationLock
@@ -10,15 +10,20 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 public extension View {
     func forceOrientation(_ orientation: UIInterfaceOrientationMask) {
-        AppDelegate.orientationLock = orientation
+        let isLandscape = !orientation.intersection([.landscape, .landscapeLeft, .landscapeRight]).isEmpty
+        AppDelegate.orientationLock = isLandscape ? .landscape : (UIDevice.current.userInterfaceIdiom == .pad ? .all : .portrait)
+        
+        let targetOrientation: UIInterfaceOrientation = isLandscape ? .landscapeRight : .portrait
+        UIDevice.current.setValue(targetOrientation.rawValue, forKey: "orientation")
+        
         if #available(iOS 16.0, *) {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                let geom = UIWindowScene.GeometryPreferences.iOS(interfaceOrientations: orientation.contains(.landscape) ? .landscapeRight : .portrait)
-                windowScene.requestGeometryUpdate(geom) { _ in }
+            DispatchQueue.main.async {
+                let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+                for scene in scenes {
+                    let geom = UIWindowScene.GeometryPreferences.iOS(interfaceOrientations: isLandscape ? .landscapeRight : .portrait)
+                    scene.requestGeometryUpdate(geom) { _ in }
+                }
             }
-        } else {
-            let val = orientation.contains(.landscape) ? UIInterfaceOrientation.landscapeRight.rawValue : UIInterfaceOrientation.portrait.rawValue
-            UIDevice.current.setValue(val, forKey: "orientation")
         }
         UIViewController.attemptRotationToDeviceOrientation()
     }

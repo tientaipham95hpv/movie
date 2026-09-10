@@ -71,39 +71,95 @@ struct PlayerScreenView: View {
     let episode: UnifiedEpisode
     let movieTitle: String
     @Environment(\.dismiss) var dismiss
+    @State private var showHeader = true
     
     var body: some View {
         ZStack(alignment: .topLeading) {
             Color.black.ignoresSafeArea()
             
-            VStack {
+            VStack(spacing: 0) {
                 PlayerView(urlString: episode.embedURL)
                     .edgesIgnoringSafeArea(.all)
             }
+            .edgesIgnoringSafeArea(.all)
             
             // Header back button & title
-            HStack {
+            if showHeader {
+                HStack(spacing: 12) {
+                    Button(action: {
+                        forceOrientation(.portrait)
+                        dismiss()
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 15, weight: .bold))
+                            Text("Thoát")
+                                .font(.system(size: 13, weight: .semibold))
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 7)
+                        .background(Color.black.opacity(0.65))
+                        .clipShape(Capsule())
+                    }
+                    
+                    Text("\(movieTitle) - \(episode.name)")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 7)
+                        .background(Color.black.opacity(0.55))
+                        .clipShape(Capsule())
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            showHeader = false
+                        }
+                    }) {
+                        Image(systemName: "eye.slash.fill")
+                            .font(.system(size: 13))
+                            .foregroundColor(.white.opacity(0.8))
+                            .padding(8)
+                            .background(Color.black.opacity(0.65))
+                            .clipShape(Circle())
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .transition(.opacity)
+            } else {
+                // Subtle mini floating exit button always available
                 Button(action: {
+                    forceOrientation(.portrait)
                     dismiss()
                 }) {
-                    Image(systemName: "chevron.left.circle.fill")
-                        .font(.title)
-                        .foregroundColor(.white.opacity(0.85))
-                        .padding()
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.white.opacity(0.8))
+                        .padding(9)
+                        .background(Color.black.opacity(0.5))
+                        .clipShape(Circle())
                 }
-                
-                Text("\(movieTitle) - \(episode.name)")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .lineLimit(1)
-                
-                Spacer()
+                .padding(.leading, 16)
+                .padding(.top, 12)
+                .transition(.opacity)
             }
-            .background(
-                LinearGradient(gradient: Gradient(colors: [Color.black.opacity(0.8), Color.clear]), startPoint: .top, endPoint: .bottom)
-            )
         }
         .navigationBarHidden(true)
         .statusBar(hidden: true)
+        .onAppear {
+            forceOrientation(.landscapeRight)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    showHeader = false
+                }
+            }
+        }
+        .onDisappear {
+            forceOrientation(.portrait)
+        }
     }
 }
