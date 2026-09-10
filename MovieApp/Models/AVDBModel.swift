@@ -38,6 +38,26 @@ public enum StringOrArray: Codable {
     }
 }
 
+// MARK: - Dynamic Coding Key Helper
+struct DynamicCodingKey: CodingKey {
+    var stringValue: String
+    var intValue: Int?
+    
+    init?(stringValue: String) {
+        self.stringValue = stringValue
+        self.intValue = nil
+    }
+    
+    init?(intValue: Int) {
+        self.stringValue = "\(intValue)"
+        self.intValue = intValue
+    }
+    
+    static func key(_ string: String) -> DynamicCodingKey {
+        return DynamicCodingKey(stringValue: string)!
+    }
+}
+
 // MARK: - AVDB API Models
 public struct AVDBListResponse: Codable {
     public let code: Int?
@@ -74,83 +94,86 @@ public struct AVDBMovieItem: Codable {
     public let vod_play_from: String?
     public let vod_play_url: String?
     
-    enum CodingKeys: String, CodingKey {
-        case id, vod_id
-        case name, vod_name
-        case origin_name, vod_sub
-        case slug, vod_en
-        case movie_code, tag
-        case category
-        case vod_class, type_name
-        case poster_url, thumb_url
-        case vod_pic, vod_pic_thumb, vod_pic_slide
-        case actor, vod_actor
-        case director, vod_director
-        case country, vod_area
-        case year, vod_year
-        case quality, vod_remarks
-        case status
-        case description, vod_content, content
-        case vod_time, time
-        case episodes
-        case vod_play_from, vod_play_url
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: DynamicCodingKey.self)
+        
+        func decodeString(_ keys: [String]) -> String? {
+            for k in keys {
+                if let val = try? container.decodeIfPresent(String.self, forKey: DynamicCodingKey.key(k)), !val.isEmpty {
+                    return val
+                }
+            }
+            return nil
+        }
+        
+        func decodeIntOrString(_ keys: [String]) -> IntOrString? {
+            for k in keys {
+                if let val = try? container.decodeIfPresent(IntOrString.self, forKey: DynamicCodingKey.key(k)) {
+                    return val
+                }
+            }
+            return nil
+        }
+        
+        func decodeStringOrArray(_ keys: [String]) -> StringOrArray? {
+            for k in keys {
+                if let val = try? container.decodeIfPresent(StringOrArray.self, forKey: DynamicCodingKey.key(k)) {
+                    return val
+                }
+            }
+            return nil
+        }
+        
+        self.id = decodeIntOrString(["id", "vod_id"])
+        self.name = decodeString(["name", "vod_name"])
+        self.origin_name = decodeString(["origin_name", "vod_sub"])
+        self.slug = decodeString(["slug", "vod_en"])
+        self.movie_code = decodeString(["movie_code"])
+        self.tag = decodeString(["tag"])
+        self.category = decodeStringOrArray(["category", "vod_class", "type_name"])
+        self.poster_url = decodeString(["poster_url"])
+        self.thumb_url = decodeString(["thumb_url"])
+        self.vod_pic = decodeString(["vod_pic"])
+        self.vod_pic_thumb = decodeString(["vod_pic_thumb"])
+        self.vod_pic_slide = decodeString(["vod_pic_slide"])
+        self.actor = decodeStringOrArray(["actor", "vod_actor"])
+        self.director = decodeStringOrArray(["director", "vod_director"])
+        self.country = decodeStringOrArray(["country", "vod_area"])
+        self.year = decodeIntOrString(["year", "vod_year"])
+        self.quality = decodeString(["quality", "vod_remarks"])
+        self.status = decodeString(["status"])
+        self.description = decodeString(["description", "vod_content", "content"])
+        self.vod_time = decodeString(["vod_time", "time"])
+        self.episodes = try? container.decodeIfPresent(AVDBEpisodesContainer.self, forKey: DynamicCodingKey.key("episodes"))
+        self.vod_play_from = decodeString(["vod_play_from"])
+        self.vod_play_url = decodeString(["vod_play_url"])
     }
     
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        self.id = (try? container.decodeIfPresent(IntOrString.self, forKey: .id))
-            ?? (try? container.decodeIfPresent(IntOrString.self, forKey: .vod_id))
-        
-        self.name = (try? container.decodeIfPresent(String.self, forKey: .name))
-            ?? (try? container.decodeIfPresent(String.self, forKey: .vod_name))
-        
-        self.origin_name = (try? container.decodeIfPresent(String.self, forKey: .origin_name))
-            ?? (try? container.decodeIfPresent(String.self, forKey: .vod_sub))
-        
-        self.slug = (try? container.decodeIfPresent(String.self, forKey: .slug))
-            ?? (try? container.decodeIfPresent(String.self, forKey: .vod_en))
-        
-        self.movie_code = try? container.decodeIfPresent(String.self, forKey: .movie_code)
-        self.tag = try? container.decodeIfPresent(String.self, forKey: .tag)
-        
-        self.category = (try? container.decodeIfPresent(StringOrArray.self, forKey: .category))
-            ?? (try? container.decodeIfPresent(StringOrArray.self, forKey: .vod_class))
-            ?? (try? container.decodeIfPresent(StringOrArray.self, forKey: .type_name))
-        
-        self.poster_url = try? container.decodeIfPresent(String.self, forKey: .poster_url)
-        self.thumb_url = try? container.decodeIfPresent(String.self, forKey: .thumb_url)
-        self.vod_pic = try? container.decodeIfPresent(String.self, forKey: .vod_pic)
-        self.vod_pic_thumb = try? container.decodeIfPresent(String.self, forKey: .vod_pic_thumb)
-        self.vod_pic_slide = try? container.decodeIfPresent(String.self, forKey: .vod_pic_slide)
-        
-        self.actor = (try? container.decodeIfPresent(StringOrArray.self, forKey: .actor))
-            ?? (try? container.decodeIfPresent(StringOrArray.self, forKey: .vod_actor))
-        
-        self.director = (try? container.decodeIfPresent(StringOrArray.self, forKey: .director))
-            ?? (try? container.decodeIfPresent(StringOrArray.self, forKey: .vod_director))
-        
-        self.country = (try? container.decodeIfPresent(StringOrArray.self, forKey: .country))
-            ?? (try? container.decodeIfPresent(StringOrArray.self, forKey: .vod_area))
-        
-        self.year = (try? container.decodeIfPresent(IntOrString.self, forKey: .year))
-            ?? (try? container.decodeIfPresent(IntOrString.self, forKey: .vod_year))
-        
-        self.quality = (try? container.decodeIfPresent(String.self, forKey: .quality))
-            ?? (try? container.decodeIfPresent(String.self, forKey: .vod_remarks))
-        
-        self.status = try? container.decodeIfPresent(String.self, forKey: .status)
-        
-        self.description = (try? container.decodeIfPresent(String.self, forKey: .description))
-            ?? (try? container.decodeIfPresent(String.self, forKey: .vod_content))
-            ?? (try? container.decodeIfPresent(String.self, forKey: .content))
-        
-        self.vod_time = (try? container.decodeIfPresent(String.self, forKey: .vod_time))
-            ?? (try? container.decodeIfPresent(String.self, forKey: .time))
-        
-        self.episodes = try? container.decodeIfPresent(AVDBEpisodesContainer.self, forKey: .episodes)
-        self.vod_play_from = try? container.decodeIfPresent(String.self, forKey: .vod_play_from)
-        self.vod_play_url = try? container.decodeIfPresent(String.self, forKey: .vod_play_url)
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: DynamicCodingKey.self)
+        try container.encodeIfPresent(id, forKey: DynamicCodingKey.key("id"))
+        try container.encodeIfPresent(name, forKey: DynamicCodingKey.key("name"))
+        try container.encodeIfPresent(origin_name, forKey: DynamicCodingKey.key("origin_name"))
+        try container.encodeIfPresent(slug, forKey: DynamicCodingKey.key("slug"))
+        try container.encodeIfPresent(movie_code, forKey: DynamicCodingKey.key("movie_code"))
+        try container.encodeIfPresent(tag, forKey: DynamicCodingKey.key("tag"))
+        try container.encodeIfPresent(category, forKey: DynamicCodingKey.key("category"))
+        try container.encodeIfPresent(poster_url, forKey: DynamicCodingKey.key("poster_url"))
+        try container.encodeIfPresent(thumb_url, forKey: DynamicCodingKey.key("thumb_url"))
+        try container.encodeIfPresent(vod_pic, forKey: DynamicCodingKey.key("vod_pic"))
+        try container.encodeIfPresent(vod_pic_thumb, forKey: DynamicCodingKey.key("vod_pic_thumb"))
+        try container.encodeIfPresent(vod_pic_slide, forKey: DynamicCodingKey.key("vod_pic_slide"))
+        try container.encodeIfPresent(actor, forKey: DynamicCodingKey.key("actor"))
+        try container.encodeIfPresent(director, forKey: DynamicCodingKey.key("director"))
+        try container.encodeIfPresent(country, forKey: DynamicCodingKey.key("country"))
+        try container.encodeIfPresent(year, forKey: DynamicCodingKey.key("year"))
+        try container.encodeIfPresent(quality, forKey: DynamicCodingKey.key("quality"))
+        try container.encodeIfPresent(status, forKey: DynamicCodingKey.key("status"))
+        try container.encodeIfPresent(description, forKey: DynamicCodingKey.key("description"))
+        try container.encodeIfPresent(vod_time, forKey: DynamicCodingKey.key("vod_time"))
+        try container.encodeIfPresent(episodes, forKey: DynamicCodingKey.key("episodes"))
+        try container.encodeIfPresent(vod_play_from, forKey: DynamicCodingKey.key("vod_play_from"))
+        try container.encodeIfPresent(vod_play_url, forKey: DynamicCodingKey.key("vod_play_url"))
     }
 }
 
