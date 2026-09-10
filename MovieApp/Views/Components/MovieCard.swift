@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MovieCard: View {
     let movie: UnifiedMovie
+    @State private var isFavorite = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -41,7 +42,7 @@ struct MovieCard: View {
                     )
                     .frame(width: geo.size.width, height: 180)
                     
-                    // Badges
+                    // Top Badges & Quick Favorite Button
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
                             Text(movie.source.rawValue)
@@ -57,6 +58,22 @@ struct MovieCard: View {
                                 .cornerRadius(5)
                             
                             Spacer()
+                            
+                            // Quick Favorite Button
+                            Button(action: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                    FavoritesService.shared.toggleFavorite(movie: movie)
+                                    isFavorite = FavoritesService.shared.isFavorite(movieID: movie.id)
+                                }
+                            }) {
+                                Image(systemName: isFavorite ? "heart.fill" : "heart")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundColor(isFavorite ? .appAccentPink : .white.opacity(0.8))
+                                    .padding(5)
+                                    .background(Color.black.opacity(0.6))
+                                    .clipShape(Circle())
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
                             
                             if !movie.quality.isEmpty {
                                 Text(movie.quality)
@@ -106,5 +123,8 @@ struct MovieCard: View {
                 .stroke(Color.appCardBorder, lineWidth: 1)
         )
         .clipped()
+        .onAppear {
+            isFavorite = FavoritesService.shared.isFavorite(movieID: movie.id)
+        }
     }
 }

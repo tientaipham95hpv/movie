@@ -7,9 +7,7 @@ struct MovieDetailView: View {
     @State private var selectedEpisode: UnifiedEpisode?
     @State private var isFavorite = false
     @State private var isPlaying = false
-    @State private var isDownloading = false
-    
-    @ObservedObject var downloadManager = DownloadManager.shared
+    @State private var relatedMovies: [UnifiedMovie] = []
     
     init(movie: UnifiedMovie) {
         self.initialMovie = movie
@@ -222,6 +220,31 @@ struct MovieDetailView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(14)
                         .glassCard(cornerRadius: 14)
+                        
+                        // Related Movies Section
+                        if !relatedMovies.isEmpty {
+                            VStack(alignment: .leading, spacing: 10) {
+                                HStack {
+                                    Image(systemName: "film.stack.fill")
+                                        .foregroundColor(.appAccentBlue)
+                                    Text("Phim Tương Tự")
+                                        .font(.system(size: 17, weight: .bold))
+                                        .foregroundColor(.white)
+                                }
+                                
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 12) {
+                                        ForEach(relatedMovies) { rel in
+                                            NavigationLink(destination: LazyView(MovieDetailView(movie: rel))) {
+                                                MovieCard(movie: rel)
+                                                    .frame(width: 135)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            .padding(.top, 6)
+                        }
                     }
                     .padding(.horizontal)
                 }
@@ -231,6 +254,7 @@ struct MovieDetailView: View {
         .onAppear {
             checkFavoriteStatus()
             loadDetail()
+            loadRelatedMovies()
         }
         .fullScreenCover(isPresented: $isPlaying) {
             if let ep = selectedEpisode ?? movie.episodes.first {
@@ -265,5 +289,23 @@ struct MovieDetailView: View {
     private func toggleFavorite() {
         FavoritesService.shared.toggleFavorite(movie: movie)
         isFavorite = FavoritesService.shared.isFavorite(movieID: movie.id)
+    }
+    
+    private func loadRelatedMovies() {
+        Task {
+            // Search by first category or actor or fetch source list
+            let queryKey = movie.category.first ?? movie.actor.first
+            var items: [UnifiedMovie] = []
+            if let q = queryKey, !q.isEmpty {
+                items = (try? await APIService.shared.searchMovies(query: q, source: movie.source)) ?? []
+            }
+            if items.isEmpty {
+                items = (try? await APIService.shared.fetchMovies(source: movie.source, page: 1)) ?? []
+            }
+            let filtered = items.filter { $0.id != movie.id }
+            await MainActor.run {
+                self.relatedMovies = Array(filtered.prefix(10))
+            }
+        }
     }
 }

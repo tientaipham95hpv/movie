@@ -35,6 +35,8 @@ public class HistoryService: ObservableObject {
         currentTime: Double,
         duration: Double
     ) {
+        // Skip saving if Incognito Mode is ON
+        if SecurityService.shared.isIncognitoMode { return }
         guard duration > 0 else { return }
         
         var list = getHistoryList()

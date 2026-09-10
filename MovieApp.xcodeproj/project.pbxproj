@@ -31,6 +31,10 @@
 		AA1000172C8F000100000017 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2000172C8F000100000017 /* SettingsView.swift */; };
 		AA1000182C8F000100000018 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2000182C8F000100000018 /* DesignSystem.swift */; };
 		AA1000192C8F000100000019 /* CachedAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2000192C8F000100000019 /* CachedAsyncImage.swift */; };
+		AA10001A2C8F00010000001A /* FavoritesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA20001A2C8F00010000001A /* FavoritesService.swift */; };
+		AA10001B2C8F00010000001B /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA20001B2C8F00010000001B /* LazyView.swift */; };
+		AA10001C2C8F00010000001C /* SearchHistoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA20001C2C8F00010000001C /* SearchHistoryService.swift */; };
+		AA10001D2C8F00010000001D /* ShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA20001D2C8F00010000001D /* ShimmerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +64,10 @@
 		AA2000172C8F000100000017 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SettingsView.swift; sourceTree = "<group>"; };
 		AA2000182C8F000100000018 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/DesignSystem.swift; sourceTree = "<group>"; };
 		AA2000192C8F000100000019 /* CachedAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/CachedAsyncImage.swift; sourceTree = "<group>"; };
+		AA20001A2C8F00010000001A /* FavoritesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/FavoritesService.swift; sourceTree = "<group>"; };
+		AA20001B2C8F00010000001B /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/LazyView.swift; sourceTree = "<group>"; };
+		AA20001C2C8F00010000001C /* SearchHistoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/SearchHistoryService.swift; sourceTree = "<group>"; };
+		AA20001D2C8F00010000001D /* ShimmerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/ShimmerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +117,10 @@
 				AA2000172C8F000100000017 /* SettingsView.swift */,
 				AA2000182C8F000100000018 /* DesignSystem.swift */,
 				AA2000192C8F000100000019 /* CachedAsyncImage.swift */,
+				AA20001A2C8F00010000001A /* FavoritesService.swift */,
+				AA20001B2C8F00010000001B /* LazyView.swift */,
+				AA20001C2C8F00010000001C /* SearchHistoryService.swift */,
+				AA20001D2C8F00010000001D /* ShimmerView.swift */,
 			);
 			path = MovieApp;
 			sourceTree = "<group>";
@@ -194,6 +206,10 @@
 				AA1000172C8F000100000017 /* SettingsView.swift in Sources */,
 				AA1000182C8F000100000018 /* DesignSystem.swift in Sources */,
 				AA1000192C8F000100000019 /* CachedAsyncImage.swift in Sources */,
+				AA10001A2C8F00010000001A /* FavoritesService.swift in Sources */,
+				AA10001B2C8F00010000001B /* LazyView.swift in Sources */,
+				AA10001C2C8F00010000001C /* SearchHistoryService.swift in Sources */,
+				AA10001D2C8F00010000001D /* ShimmerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

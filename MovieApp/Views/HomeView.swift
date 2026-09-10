@@ -40,16 +40,15 @@ struct HomeView: View {
                         }
                     
                     if isLoading && movies.isEmpty {
-                        Spacer()
-                        VStack(spacing: 12) {
-                            ProgressView()
-                                .tint(.appAccentPurple)
-                                .scaleEffect(1.2)
-                            Text("Đang tải dữ liệu phim...")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
+                        ScrollView(showsIndicators: false) {
+                            LazyVGrid(columns: columns, spacing: 14) {
+                                ForEach(0..<6, id: \.self) { _ in
+                                    SkeletonMovieCard()
+                                }
+                            }
+                            .padding(.horizontal)
+                            .padding(.top, 6)
                         }
-                        Spacer()
                     } else if let error = errorMessage, movies.isEmpty {
                         Spacer()
                         VStack(spacing: 14) {

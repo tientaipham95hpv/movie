@@ -7,6 +7,8 @@ struct SearchView: View {
     @State private var isSearching = false
     @State private var errorMessage: String?
     
+    @ObservedObject var searchHistory = SearchHistoryService.shared
+    
     private let columns = [
         GridItem(.flexible(), spacing: 14),
         GridItem(.flexible(), spacing: 14)
@@ -17,7 +19,7 @@ struct SearchView: View {
             ZStack {
                 Color.appBackground.ignoresSafeArea()
                 
-                VStack(spacing: 14) {
+                VStack(spacing: 12) {
                     // Glass Search Bar
                     HStack(spacing: 10) {
                         Image(systemName: "magnifyingglass")
@@ -49,28 +51,13 @@ struct SearchView: View {
                             if !query.isEmpty { performSearch() }
                         }
                     
-                    // Category & Actor Quick Filter Chips
-                    VStack(alignment: .leading, spacing: 8) {
+                    // Quick Filter Chips (Categories, Actors, Years & Countries)
+                    VStack(alignment: .leading, spacing: 6) {
                         // Category Chips Row
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 8) {
                                 ForEach(["Vietsub", "Uncensored", "Chinese AV", "Hentai", "Hành Động", "Tình Cảm", "Học Đường", "Văn Phòng", "Y Tá", "Gia Đình", "Hài Hước"], id: \.self) { cat in
-                                    Button(action: {
-                                        query = cat
-                                        performSearch()
-                                    }) {
-                                        Text(cat)
-                                            .font(.system(size: 12, weight: .semibold))
-                                            .padding(.horizontal, 12)
-                                            .padding(.vertical, 6)
-                                            .background(query == cat ? Color.appAccentBlue : Color.appCardBg)
-                                            .foregroundColor(query == cat ? .white : .gray)
-                                            .cornerRadius(12)
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 12)
-                                                    .stroke(query == cat ? Color.clear : Color.appCardBorder, lineWidth: 1)
-                                            )
-                                    }
+                                    filterButton(title: cat, isSelected: query == cat, color: .appAccentBlue)
                                 }
                             }
                             .padding(.horizontal)
@@ -105,17 +92,29 @@ struct SearchView: View {
                             }
                             .padding(.horizontal)
                         }
+                        
+                        // Year & Country Row
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(["2024", "2023", "2022", "2021", "Nhật Bản", "Trung Quốc", "Âu Mỹ", "Hàn Quốc"], id: \.self) { item in
+                                    filterButton(title: item, isSelected: query == item, color: .appAccentPink)
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
                     }
                     
                     if isSearching {
-                        Spacer()
-                        VStack(spacing: 12) {
-                            ProgressView().tint(.appAccentPurple).scaleEffect(1.2)
-                            Text("Đang tìm kiếm phim...")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
+                        // Skeleton Shimmer Loading Grid
+                        ScrollView(showsIndicators: false) {
+                            LazyVGrid(columns: columns, spacing: 14) {
+                                ForEach(0..<6, id: \.self) { _ in
+                                    SkeletonMovieCard()
+                                }
+                            }
+                            .padding(.horizontal)
+                            .padding(.top, 4)
                         }
-                        Spacer()
                     } else if searchResults.isEmpty && !query.isEmpty {
                         Spacer()
                         VStack(spacing: 10) {
@@ -131,6 +130,58 @@ struct SearchView: View {
                         }
                         Spacer()
                     } else if searchResults.isEmpty {
+                        // Empty query state with Recent Searches if available
+                        if !searchHistory.recentQueries.isEmpty {
+                            VStack(alignment: .leading, spacing: 10) {
+                                HStack {
+                                    Image(systemName: "clock.arrow.circlepath")
+                                        .foregroundColor(.appAccentBlue)
+                                    Text("Tìm Kiếm Gần Đây")
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundColor(.white)
+                                    Spacer()
+                                    Button("Xóa") {
+                                        searchHistory.clearHistory()
+                                    }
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                }
+                                .padding(.horizontal)
+                                
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 8) {
+                                        ForEach(searchHistory.recentQueries, id: \.self) { recent in
+                                            Button(action: {
+                                                query = recent
+                                                performSearch()
+                                            }) {
+                                                HStack(spacing: 4) {
+                                                    Text(recent)
+                                                        .font(.system(size: 12))
+                                                        .foregroundColor(.white.opacity(0.9))
+                                                    Button(action: { searchHistory.removeQuery(recent) }) {
+                                                        Image(systemName: "xmark")
+                                                            .font(.system(size: 9))
+                                                            .foregroundColor(.gray)
+                                                    }
+                                                }
+                                                .padding(.horizontal, 10)
+                                                .padding(.vertical, 6)
+                                                .background(Color.appCardBg)
+                                                .cornerRadius(12)
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 12)
+                                                        .stroke(Color.appCardBorder, lineWidth: 1)
+                                                )
+                                            }
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                }
+                            }
+                            .padding(.top, 4)
+                        }
+                        
                         Spacer()
                         VStack(spacing: 12) {
                             ZStack {
@@ -146,7 +197,7 @@ struct SearchView: View {
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
                             
-                            Text("Tìm kiếm phim bộ, phim lẻ từ VSPHIM và AVDB")
+                            Text("Tìm kiếm phim bộ, phim lẻ, diễn viên từ VSPHIM và AVDB")
                                 .font(.caption)
                                 .foregroundColor(.gray)
                         }
@@ -171,8 +222,28 @@ struct SearchView: View {
         .navigationViewStyle(.stack)
     }
     
+    private func filterButton(title: String, isSelected: Bool, color: Color) -> some View {
+        Button(action: {
+            query = title
+            performSearch()
+        }) {
+            Text(title)
+                .font(.system(size: 12, weight: .semibold))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(isSelected ? color : Color.appCardBg)
+                .foregroundColor(isSelected ? .white : .gray)
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(isSelected ? Color.clear : Color.appCardBorder, lineWidth: 1)
+                )
+        }
+    }
+    
     private func performSearch() {
         guard !query.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        searchHistory.addQuery(query)
         isSearching = true
         errorMessage = nil
         

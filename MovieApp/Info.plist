@@ -22,6 +22,48 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundleAlternateIcons</key>
+		<dict>
+			<key>calculator</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>calculator</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>notes</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>notes</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>weather</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>weather</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>clock</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>clock</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+		</dict>
+	</dict>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

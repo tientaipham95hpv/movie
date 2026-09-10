@@ -5,6 +5,7 @@ public class SecurityService: ObservableObject {
     public static let shared = SecurityService()
     
     private let faceIDKey = "AppSecurity_FaceID_Enabled"
+    private let incognitoKey = "AppSecurity_Incognito_Enabled"
     
     @Published public var isFaceIDEnabled: Bool {
         didSet {
@@ -12,10 +13,17 @@ public class SecurityService: ObservableObject {
         }
     }
     
+    @Published public var isIncognitoMode: Bool {
+        didSet {
+            UserDefaults.standard.set(isIncognitoMode, forKey: incognitoKey)
+        }
+    }
+    
     @Published public var isUnlocked: Bool = true
     
     public init() {
         self.isFaceIDEnabled = UserDefaults.standard.bool(forKey: faceIDKey)
+        self.isIncognitoMode = UserDefaults.standard.bool(forKey: incognitoKey)
         if self.isFaceIDEnabled {
             self.isUnlocked = false
         }
