@@ -97,7 +97,7 @@ struct SearchView: View {
                         ScrollView(showsIndicators: false) {
                             LazyVGrid(columns: columns, spacing: 16) {
                                 ForEach(searchResults) { movie in
-                                    NavigationLink(destination: MovieDetailView(movie: movie)) {
+                                    NavigationLink(destination: LazyView(MovieDetailView(movie: movie))) {
                                         MovieCard(movie: movie)
                                     }
                                 }

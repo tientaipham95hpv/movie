@@ -204,7 +204,7 @@ struct HomeView: View {
             
             LazyVGrid(columns: columns, spacing: 14) {
                 ForEach(movies) { movie in
-                    NavigationLink(destination: MovieDetailView(movie: movie)) {
+                    NavigationLink(destination: LazyView(MovieDetailView(movie: movie))) {
                         MovieCard(movie: movie)
                     }
                     .onAppear {

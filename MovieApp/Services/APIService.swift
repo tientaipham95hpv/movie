@@ -83,7 +83,7 @@ public class APIService: ObservableObject {
     
     // MARK: - AVDB List API
     private func fetchAVDBList(page: Int) async throws -> [UnifiedMovie] {
-        guard let url = URL(string: "https://avdbapi.com/api.php/provide/vod/at/json?ac=list&pg=\(page)") else {
+        guard let url = URL(string: "https://avdbapi.com/api.php/provide/vod/at/json?ac=detail&pg=\(page)") else {
             throw APIError.invalidURL
         }
         let req = createRequest(url: url)

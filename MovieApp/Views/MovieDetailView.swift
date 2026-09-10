@@ -140,8 +140,10 @@ struct MovieDetailView: View {
                             if let ep = selectedEpisode ?? movie.episodes.first {
                                 Button(action: {
                                     Task {
-                                        if let stream = await HLSExtractorService.shared.extractStreamURL(from: ep.embedURL) {
-                                            downloadManager.startDownload(movie: movie, episode: ep, streamURL: stream)
+                                        let extracted = await HLSExtractorService.shared.extractStreamURL(from: ep.embedURL)
+                                        let targetURL = extracted ?? ep.embedURL
+                                        await MainActor.run {
+                                            downloadManager.startDownload(movie: movie, episode: ep, streamURL: targetURL)
                                             isDownloading = true
                                         }
                                     }
@@ -282,23 +284,11 @@ struct MovieDetailView: View {
     }
     
     private func checkFavoriteStatus() {
-        let favorites = getFavoriteIDs()
-        isFavorite = favorites.contains(movie.id)
+        isFavorite = FavoritesService.shared.isFavorite(movieID: movie.id)
     }
     
     private func toggleFavorite() {
-        var favorites = getFavoriteIDs()
-        if isFavorite {
-            favorites.remove(movie.id)
-        } else {
-            favorites.insert(movie.id)
-        }
-        UserDefaults.standard.set(Array(favorites), forKey: "FavoriteMovieIDs")
-        isFavorite.toggle()
-    }
-    
-    private func getFavoriteIDs() -> Set<String> {
-        let arr = UserDefaults.standard.stringArray(forKey: "FavoriteMovieIDs") ?? []
-        return Set(arr)
+        FavoritesService.shared.toggleFavorite(movie: movie)
+        isFavorite = FavoritesService.shared.isFavorite(movieID: movie.id)
     }
 }

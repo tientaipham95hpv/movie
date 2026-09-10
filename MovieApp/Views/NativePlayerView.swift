@@ -119,11 +119,11 @@ struct NativePlayerContainerView: View {
     }
     
     private func rotateToLandscape() {
-        UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+        forceOrientation(.landscapeRight)
     }
     
     private func rotateToPortrait() {
-        UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+        forceOrientation(.portrait)
     }
     
     private func extractAndPreparePlayer() {

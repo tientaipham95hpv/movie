@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct FavoritesView: View {
-    @State private var favoriteMovies: [UnifiedMovie] = []
+    @ObservedObject var favoritesService = FavoritesService.shared
     
     private let columns = [
         GridItem(.flexible(), spacing: 14),
@@ -24,7 +24,7 @@ struct FavoritesView: View {
                     .padding(.horizontal)
                     .padding(.top, 8)
                     
-                    if favoriteMovies.isEmpty {
+                    if favoritesService.favorites.isEmpty {
                         Spacer()
                         VStack(spacing: 12) {
                             ZStack {
@@ -48,8 +48,8 @@ struct FavoritesView: View {
                     } else {
                         ScrollView(showsIndicators: false) {
                             LazyVGrid(columns: columns, spacing: 16) {
-                                ForEach(favoriteMovies) { movie in
-                                    NavigationLink(destination: MovieDetailView(movie: movie)) {
+                                ForEach(favoritesService.favorites) { movie in
+                                    NavigationLink(destination: LazyView(MovieDetailView(movie: movie))) {
                                         MovieCard(movie: movie)
                                     }
                                 }
@@ -61,13 +61,9 @@ struct FavoritesView: View {
             }
             .navigationBarHidden(true)
             .onAppear {
-                loadFavorites()
+                favoritesService.loadFavorites()
             }
         }
         .navigationViewStyle(.stack)
-    }
-    
-    private func loadFavorites() {
-        let _ = UserDefaults.standard.stringArray(forKey: "FavoriteMovieIDs") ?? []
     }
 }
