@@ -185,7 +185,16 @@ public class DownloadManager: NSObject, ObservableObject {
             var segReq = URLRequest(url: segURL)
             segReq.addValue(userAgent, forHTTPHeaderField: "User-Agent")
             
-            if let (segData, _) = try? await URLSession.shared.data(for: segReq) {
+            var fetchedData: Data? = nil
+            for _ in 0..<3 {
+                if let (d, res) = try? await URLSession.shared.data(for: segReq),
+                   let httpRes = res as? HTTPURLResponse, (200...299).contains(httpRes.statusCode) {
+                    fetchedData = d
+                    break
+                }
+            }
+            
+            if let segData = fetchedData {
                 fileHandle.write(segData)
                 downloadedCount += 1
                 

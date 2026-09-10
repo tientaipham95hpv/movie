@@ -8,7 +8,7 @@ public class HLSExtractorService {
     
     public init() {
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 10
+        config.timeoutIntervalForRequest = 12
         self.session = URLSession(configuration: config)
     }
     
@@ -29,28 +29,43 @@ public class HLSExtractorService {
             let (data, _) = try await session.data(for: req)
             guard let html = String(data: data, encoding: .utf8) else { return nil }
             
-            // Regex patterns for HLS .m3u8 / .mp4 links in player scripts
+            // Regex patterns for HLS .m3u8 / .mp4 links in player scripts & PLAYER_CONFIG
             let patterns = [
-                #"https?://[^"'\s\\]+\.m3u8[^"'\s\\]*"#,
-                #"file\s*:\s*["'](https?://[^"']+\.m3u8[^"']*)["']"#,
-                #"source\s*:\s*["'](https?://[^"']+\.m3u8[^"']*)["']"#,
-                #"src\s*=\s*["'](https?://[^"']+\.m3u8[^"']*)["']"#,
-                #"https?://[^"'\s\\]+\.mp4[^"'\s\\]*"#
+                #""m3u8"\s*:\s*["']([^"']+)["']"#,
+                #"file\s*:\s*["']([^"']+\.m3u8[^"']*)["']"#,
+                #"source\s*:\s*["']([^"']+\.m3u8[^"']*)["']"#,
+                #"https?:[/\\]+[^\s"'\\]+\.m3u8[^\s"'\\]*"#,
+                #"https?://[^\s"'\\]+\.m3u8[^\s"'\\]*"#,
+                #"src\s*=\s*["']([^"']+\.m3u8[^"']*)["']"#,
+                #"https?://[^\s"'\\]+\.mp4[^\s"'\\]*"#
             ]
             
             for pattern in patterns {
                 let regex = try NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
                 let range = NSRange(location: 0, length: html.utf16.count)
-                if let match = regex.firstMatch(in: html, options: [], range: range) {
+                let matches = regex.matches(in: html, options: [], range: range)
+                
+                for match in matches {
+                    var targetStr = ""
                     if match.numberOfRanges > 1 {
                         let matchedRange = match.range(at: 1)
                         if let r = Range(matchedRange, in: html) {
-                            return String(html[r]).replacingOccurrences(of: "\\/", with: "/")
+                            targetStr = String(html[r])
                         }
                     } else {
                         let matchedRange = match.range(at: 0)
                         if let r = Range(matchedRange, in: html) {
-                            return String(html[r]).replacingOccurrences(of: "\\/", with: "/")
+                            targetStr = String(html[r])
+                        }
+                    }
+                    
+                    var clean = targetStr.replacingOccurrences(of: "\\/", with: "/")
+                    clean = clean.replacingOccurrences(of: "\\", with: "")
+                    clean = clean.trimmingCharacters(in: .whitespacesAndNewlines)
+                    
+                    if clean.hasPrefix("http://") || clean.hasPrefix("https://") {
+                        if clean.contains(".m3u8") || clean.contains(".mp4") || clean.contains("/m/") {
+                            return clean
                         }
                     }
                 }
