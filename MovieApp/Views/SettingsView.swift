@@ -268,6 +268,16 @@ struct SettingsView: View {
             } message: {
                 Text("Bạn có chắc chắn muốn xóa toàn bộ từ khóa tìm kiếm gần đây?")
             }
+            .alert("Đổi Biểu Tượng", isPresented: Binding(
+                get: { iconAlertMessage != nil },
+                set: { if !$0 { iconAlertMessage = nil } }
+            )) {
+                Button("Đã hiểu", role: .cancel) {
+                    iconAlertMessage = nil
+                }
+            } message: {
+                Text(iconAlertMessage ?? "")
+            }
         }
         .navigationViewStyle(.stack)
         .onAppear {
@@ -280,11 +290,17 @@ struct SettingsView: View {
     }
     
     private func switchAppIcon(to iconId: String) {
-        guard UIApplication.shared.supportsAlternateIcons else { return }
+        guard UIApplication.shared.supportsAlternateIcons else {
+            iconAlertMessage = "Thiết bị hoặc môi trường hiện tại không hỗ trợ đổi biểu tượng (supportsAlternateIcons = false)."
+            return
+        }
         let target = iconId == "default" ? nil : iconId
         UIApplication.shared.setAlternateIconName(target) { error in
             DispatchQueue.main.async {
-                if error == nil {
+                if let error = error {
+                    print("Lỗi đổi icon: \(error.localizedDescription)")
+                    self.iconAlertMessage = "Không thể đổi biểu tượng: \(error.localizedDescription)"
+                } else {
                     self.selectedIcon = iconId
                 }
             }

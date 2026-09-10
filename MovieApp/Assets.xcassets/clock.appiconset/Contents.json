@@ -1,0 +1,38 @@
+{
+  "images" : [
+    {
+      "idiom" : "iphone",
+      "scale" : "2x",
+      "size" : "60x60",
+      "filename" : "clock-60@2x.png"
+    },
+    {
+      "idiom" : "iphone",
+      "scale" : "3x",
+      "size" : "60x60",
+      "filename" : "clock-60@3x.png"
+    },
+    {
+      "idiom" : "ipad",
+      "scale" : "2x",
+      "size" : "76x76",
+      "filename" : "clock-76@2x.png"
+    },
+    {
+      "idiom" : "ipad",
+      "scale" : "2x",
+      "size" : "83.5x83.5",
+      "filename" : "clock-83.5@2x.png"
+    },
+    {
+      "idiom" : "universal",
+      "platform" : "ios",
+      "size" : "1024x1024",
+      "filename" : "clock-1024.png"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
