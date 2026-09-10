@@ -110,7 +110,7 @@ struct HomeView: View {
                         .foregroundColor(.white)
                 }
                 
-                Text("PHIM HAY")
+                Text("NOVA")
                     .font(.system(size: 22, weight: .black, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(colors: [.white, .appAccentBlue], startPoint: .leading, endPoint: .trailing)

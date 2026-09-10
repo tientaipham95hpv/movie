@@ -45,6 +45,11 @@ jobs:
 
           mkdir -p Payload
           cp -R "$APP_PATH" Payload/
+          TARGET_APP=$(find Payload -name "*.app" -type d | head -n 1)
+          if [ -d "MovieApp/Icons" ]; then
+            echo "Copying icon PNG files into app bundle..."
+            cp MovieApp/Icons/*.png "$TARGET_APP/" || true
+          fi
           zip -r MovieApp_Unsigned.ipa Payload
           rm -rf Payload
           echo "=== Successfully created MovieApp_Unsigned.ipa ==="

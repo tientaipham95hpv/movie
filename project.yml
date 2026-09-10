@@ -14,7 +14,7 @@ targets:
     info:
       path: MovieApp/Info.plist
       properties:
-        CFBundleDisplayName: "Phim Hay"
+        CFBundleDisplayName: "Nova"
         UILaunchScreen: {}
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
